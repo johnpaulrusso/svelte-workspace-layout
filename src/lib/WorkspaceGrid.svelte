@@ -1,20 +1,17 @@
 <script lang="ts">
-	import BottomBar from "./BottomBar.svelte";
     import Sidebar from "./Sidebar.svelte";
+    import { LeftbarModel } from "./Leftbar";
+    import { BottombarModel } from "./Bottombar";
 
     const BORDER_WIDTH_PX: number = 5; 
-    const REZISE_MOUSE_TOLERANCE_PX: number = 2;
 
     /* private properties */
-    let isMouseOverBottombarBorder: boolean = false;
-    let isMouseOverSidebarBorder: boolean = false;
-    let isResizingBottomBar: boolean = false;
-    let isResizingSideBar: boolean = false;
     let mouseX: number = 0;
     let mouseY: number = 0;
     let containerElement: HTMLElement | null;
-    let bottomBarElement: HTMLElement | null;
-    let sidebarElement: HTMLElement | null;
+
+    let leftSideBar: LeftbarModel = new LeftbarModel("leftsidebar", 200);
+    let bottomSideBar: BottombarModel = new BottombarModel("bottomsidebar", 200);
 
     /**
      * This component must always monitor mouse movement to handle 
@@ -28,12 +25,15 @@
 
         getElementsIfNull();
 
-        if(!containerElement || !bottomBarElement || !sidebarElement) {return}
+        if(!containerElement || !leftSideBar.element || !bottomSideBar.element) {return}
         
-        getMouseLocationDetailsFromCoordinates();
+        leftSideBar.updateIsMouseOverBorder(mouseX, BORDER_WIDTH_PX);
+        bottomSideBar.updateIsMouseOverBorder(mouseX, mouseY, BORDER_WIDTH_PX);
+
         updateCursorStyle();
-        resizeBottomBar();
-        resizeSideBar();
+
+        leftSideBar.resize(mouseX);
+        bottomSideBar.resize(containerElement.getBoundingClientRect().height - mouseY);
     }
 
     /**
@@ -42,14 +42,8 @@
      */
     function onMouseDown()
     {
-        if(isMouseOverBottombarBorder)
-        {
-            isResizingBottomBar = true;
-        }
-        if(isMouseOverSidebarBorder)
-        {
-            isResizingSideBar = true;
-        }
+        leftSideBar.setIsResizing();
+        bottomSideBar.setIsResizing();
     }
 
     /**
@@ -58,8 +52,8 @@
      */
     function onMouseUp()
     {
-        isResizingBottomBar = false;
-        isResizingSideBar = false;
+        bottomSideBar.clearIsResizing();
+        leftSideBar.clearIsResizing();
     }
 
     function getElementsIfNull()
@@ -68,35 +62,14 @@
         {
             containerElement = document.getElementById("workspace_layout");
         }
-        if(!bottomBarElement)
+        if(!bottomSideBar.element)
         {
-            bottomBarElement = document.getElementById("bottombar");
+            bottomSideBar.element = document.getElementById(bottomSideBar.name);
         }
-        if(!sidebarElement)
+        if(!leftSideBar.element)
         {
-            sidebarElement = document.getElementById("sidebar");
+            leftSideBar.element = document.getElementById(leftSideBar.name);
         }
-    }
-
-    function getMouseLocationDetailsFromCoordinates()
-    {
-        if(!bottomBarElement || !sidebarElement) return;
-
-        let bottomBarRec = bottomBarElement.getBoundingClientRect();
-        let bottomBarX = bottomBarRec.left;
-        let bottomBarY = bottomBarRec.top;
-
-        let sidebarRec = sidebarElement.getBoundingClientRect();
-        let sidebarX = sidebarRec.right;
-        
-        let isMouseXInLeftColumn: boolean = mouseX > bottomBarX - REZISE_MOUSE_TOLERANCE_PX;
-        let isMouseYInlineWithBottomBarBorder: boolean = (mouseY > (bottomBarY - REZISE_MOUSE_TOLERANCE_PX)) &&
-                                                         (mouseY < (bottomBarY + BORDER_WIDTH_PX + REZISE_MOUSE_TOLERANCE_PX));
-        let isMouseXInlineWithSideBarBorder: boolean = (mouseX > (sidebarX - BORDER_WIDTH_PX - REZISE_MOUSE_TOLERANCE_PX)) &&
-                                                       (mouseX < (sidebarX + REZISE_MOUSE_TOLERANCE_PX));
-
-        isMouseOverBottombarBorder = isMouseXInLeftColumn && isMouseYInlineWithBottomBarBorder;
-        isMouseOverSidebarBorder = isMouseXInlineWithSideBarBorder;
     }
 
     function updateCursorStyle()
@@ -107,15 +80,15 @@
         }
         if(!containerElement) return;
 
-        if((isMouseOverSidebarBorder || isResizingSideBar) && (isMouseOverBottombarBorder || isResizingBottomBar))
+        if((leftSideBar.isMouseOverBorder || leftSideBar.isResizing) && (bottomSideBar.isMouseOverBorder || bottomSideBar.isResizing))
         {
             containerElement.style.cursor = "move";
         }
-        else if(isMouseOverSidebarBorder || isResizingSideBar)
+        else if(leftSideBar.isMouseOverBorder || leftSideBar.isResizing)
         {
             containerElement.style.cursor = "col-resize";
         }
-        else if(isMouseOverBottombarBorder || isResizingBottomBar)
+        else if(bottomSideBar.isMouseOverBorder || bottomSideBar.isResizing)
         {
             containerElement.style.cursor = "row-resize";
         }
@@ -124,20 +97,6 @@
             containerElement.style.cursor = "default";
         }
     }
-
-    function resizeBottomBar()
-    {
-        if(!containerElement || !bottomBarElement || !isResizingBottomBar) return;
-
-        bottomBarElement.style.height = (containerElement.getBoundingClientRect().height - mouseY) + "px";
-    }
-
-    function resizeSideBar()
-    {
-        if(!isResizingSideBar || !sidebarElement) return;
-            
-        sidebarElement.style.width = mouseX + "px";
-    }
 </script>
 
 
@@ -145,12 +104,12 @@
     <div class="content">
         <slot name="main-content"/>
     </div>
-    <Sidebar>
-        <div slot="content">SIDEBAR</div>
+    <Sidebar id={leftSideBar.name} height="100%" width="{leftSideBar.size}px" border="solid blue {BORDER_WIDTH_PX}px" gridarea="leftbar">
+        <div slot="content">LEFTBAR</div>
     </Sidebar>
-    <BottomBar borderWidth={BORDER_WIDTH_PX}>
+    <Sidebar id={bottomSideBar.name} height="{bottomSideBar.size}px" width="100%" border="solid red {BORDER_WIDTH_PX}px" gridarea="bottombar">
         <div slot="content">BOTTOMBAR</div>
-    </BottomBar>
+    </Sidebar>
 </div>
 
 <style>
@@ -163,8 +122,8 @@
         grid-template-columns: min-content minmax(0, 1fr);
         grid-template-rows: minmax(0, 1fr) min-content;
         grid-template-areas: 
-            "sidebar content"
-            "sidebar bottombar";
+            "leftbar content"
+            "leftbar bottombar";
     }
     .content{
         grid-area: content;
