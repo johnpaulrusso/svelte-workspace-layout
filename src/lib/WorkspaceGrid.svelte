@@ -104,7 +104,7 @@
     <div class="content">
         <slot name="main-content"/>
     </div>
-    <Sidebar id={leftSideBar.name} height="100%" width="{leftSideBar.size}px" border="solid blue {BORDER_WIDTH_PX}px" gridarea="leftbar">
+    <Sidebar id={leftSideBar.name} width="{leftSideBar.size}px" border="solid blue {BORDER_WIDTH_PX}px" gridarea="leftbar">
         <div slot="content">LEFTBAR</div>
     </Sidebar>
     <Sidebar id={bottomSideBar.name} height="{bottomSideBar.size}px" width="100%" border="solid red {BORDER_WIDTH_PX}px" gridarea="bottombar">
