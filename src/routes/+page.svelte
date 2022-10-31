@@ -1,3 +1,19 @@
-<h1>Welcome to your library project</h1>
-<p>Create your package using @sveltejs/package and preview/showcase your work with SvelteKit</p>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+<script lang="ts">
+    import WorkspaceGrid from '$lib/WorkspaceGrid.svelte'
+</script>
+
+<div class="container">
+<WorkspaceGrid>
+    <div slot="main-content">MAIN CONTENT</div>
+</WorkspaceGrid>
+</div>
+
+<style>
+    .container{
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+    }
+</style>
