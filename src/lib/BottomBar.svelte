@@ -1,10 +1,10 @@
 <script lang="ts"> 
 
-const BORDER_WIDTH_PX: number = 5; 
+export let borderWidth = 1;
 
 </script>
 
-<div class="container" id="sidebar" style="border-width: {BORDER_WIDTH_PX}px">
+<div class="container" id="bottombar" style="border-width: {borderWidth}px">
     <slot name="content"/>
 </div>
 
