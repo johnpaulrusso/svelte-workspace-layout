@@ -9,6 +9,7 @@
     export let gridarea = "";
     export let border = "";
     export let orientation: SidebarOrientation = SidebarOrientation.VERTICAL;
+    export let isMinimized: boolean;
 
     let containerElement: HTMLElement | null;
     let controlButtonSymbolName = "expand_more";
@@ -21,7 +22,7 @@
         containerElement = document.getElementById(id);
     });
 
-    export const setIsMinized = (isMinimized: boolean) => {controlButtonSymbolName = isMinimized ? "expand_less" : "expand_more";};
+    $: controlButtonSymbolName = isMinimized ? "expand_less" : "expand_more";
 </script>
 
 <!-- Dependent on Google material symbols -->

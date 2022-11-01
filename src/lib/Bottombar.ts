@@ -21,13 +21,4 @@ export class BottombarModel extends SidebarModel
 
         this.isMouseOverBorder = isMouseXInLeftColumn && isMouseYInlineWithBottomBarBorder;
     }
-
-    resize(size: number)
-    {
-        if(super.resizeBase(size) && this.element)
-        {
-            this.element.style.height = this.size + "px";
-        }
-    }
-
 }

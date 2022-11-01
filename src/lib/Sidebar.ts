@@ -39,7 +39,7 @@ export abstract class SidebarModel
         this.isResizing = false;
     }
 
-    resizeBase(size: number): boolean
+    resize(size: number): boolean
     {
         if(this.isResizing)
         {
@@ -61,5 +61,5 @@ export abstract class SidebarModel
         }
     }
 
-    abstract resize(size: number): void
+    abstract updateIsMouseOverBorder(mouseX: number, mouseY: number, borderWidth: number): void
 }

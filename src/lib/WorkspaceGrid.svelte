@@ -23,9 +23,6 @@
     let leftSideBar: LeftbarModel = new LeftbarModel("leftsidebar", 200);
     let bottomSideBar: BottombarModel = new BottombarModel("bottomsidebar", 200);
 
-    let setLeftbarIsMinimized = (isMinimized: boolean) => {};
-    let setBottombarIsMinimized = (isMinimized: boolean) => {};
-
     /**
      * This component must always monitor mouse movement to handle 
      * seemless sub-element resizing. 
@@ -40,7 +37,7 @@
 
         if(!containerElement || !leftSideBar.element || !bottomSideBar.element) {return}
         
-        leftSideBar.updateIsMouseOverBorder(mouseX, borderWidth_px);
+        leftSideBar.updateIsMouseOverBorder(mouseX, mouseY, borderWidth_px);
         bottomSideBar.updateIsMouseOverBorder(mouseX, mouseY, borderWidth_px);
 
         updateCursorStyle();
@@ -48,8 +45,9 @@
         leftSideBar.resize(mouseX);
         bottomSideBar.resize(containerElement.getBoundingClientRect().height - mouseY);
 
-        setLeftbarIsMinimized(leftSideBar.isMinimized);
-        setBottombarIsMinimized(bottomSideBar.isMinimized);
+        //This is needed to trigger Svelte reactivity.
+        leftSideBar = leftSideBar;
+        bottomSideBar = bottomSideBar;
     }
 
     /**
@@ -120,15 +118,20 @@
     <div class="content">
         <slot name="main-content"><em>no content was provided to this slot.</em></slot>
     </div>
-    <Sidebar id={leftSideBar.name} width="{leftSideBar.size}px" border="{LEFTBAR_BORDER_STYLE}" gridarea="leftbar" orientation={SidebarOrientation.VERTICAL} bind:setIsMinized={setLeftbarIsMinimized}> 
+    <Sidebar id={leftSideBar.name} 
+             width="{leftSideBar.size}px" 
+             border="{LEFTBAR_BORDER_STYLE}" 
+             gridarea="leftbar" 
+             orientation={SidebarOrientation.VERTICAL}
+             isMinimized={leftSideBar.isMinimized}>
         <slot name="leftbar" slot="content"><em>no content was provided to this slot.</em></slot>
     </Sidebar>
     <Sidebar id={bottomSideBar.name} 
             height="{bottomSideBar.size}px" 
             border="{BOTTOMBAR_BORDER_STYLE}" 
             gridarea="bottombar" 
-            orientation={SidebarOrientation.HORIZONTAL} 
-            bind:setIsMinized={setBottombarIsMinimized}>
+            orientation={SidebarOrientation.HORIZONTAL}
+            isMinimized={bottomSideBar.isMinimized}>
         <slot name="bottombar" slot="content"><em>no content was provided to this slot.</em></slot>
     </Sidebar>
 </div>

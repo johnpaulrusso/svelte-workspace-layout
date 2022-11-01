@@ -7,7 +7,7 @@ export class LeftbarModel extends SidebarModel
         super(name, size);
     }
 
-    updateIsMouseOverBorder(mouseX: number, borderWidth: number)
+    updateIsMouseOverBorder(mouseX: number, mouseY: number, borderWidth: number)
     {
         if(!this.element) return;
 
@@ -18,13 +18,5 @@ export class LeftbarModel extends SidebarModel
                                                        (mouseX < (barX + REZISE_MOUSE_TOLERANCE_PX));
                                                          
         this.isMouseOverBorder = isMouseXInlineWithSideBarBorder;
-    }
-
-    resize(size: number)
-    {
-        if(super.resizeBase(size) && this.element)
-        {
-            this.element.style.width = this.size + "px";
-        }
     }
 }
