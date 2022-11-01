@@ -2,6 +2,7 @@
     import Sidebar from "./Sidebar.svelte";
     import { LeftbarModel } from "./Leftbar";
     import { BottombarModel } from "./Bottombar";
+    import {SidebarOrientation} from "./Sidebar";
 
     /* public properties */
     export let borderWidth_px: number = 1;
@@ -109,14 +110,14 @@
 </script>
 
 
-<div class="container" id="workspace_layout" on:mousemove={onMouseMove} on:mousedown={onMouseDown} on:mouseup={onMouseUp}>
+<div class="container noselect" id="workspace_layout" on:mousemove={onMouseMove} on:mousedown={onMouseDown} on:mouseup={onMouseUp}>
     <div class="content">
         <slot name="main-content"><em>no content was provided to this slot.</em></slot>
     </div>
-    <Sidebar id={leftSideBar.name} width="{leftSideBar.size}px" border="{LEFTBAR_BORDER_STYLE}" gridarea="leftbar" flexDirection="column">
+    <Sidebar id={leftSideBar.name} width="{leftSideBar.size}px" border="{LEFTBAR_BORDER_STYLE}" gridarea="leftbar" orientation={SidebarOrientation.VERTICAL}>
         <slot name="leftbar" slot="content"><em>no content was provided to this slot.</em></slot>
     </Sidebar>
-    <Sidebar id={bottomSideBar.name} height="{bottomSideBar.size}px" border="{BOTTOMBAR_BORDER_STYLE}" gridarea="bottombar" flexDirection="row">
+    <Sidebar id={bottomSideBar.name} height="{bottomSideBar.size}px" border="{BOTTOMBAR_BORDER_STYLE}" gridarea="bottombar" orientation={SidebarOrientation.HORIZONTAL}>
         <slot name="bottombar" slot="content"><em>no content was provided to this slot.</em></slot>
     </Sidebar>
 </div>
@@ -140,5 +141,15 @@
         display: flex;
         flex-direction: column;
     }
+    .noselect {
+        -webkit-touch-callout: none; /* iOS Safari */
+            -webkit-user-select: none; /* Safari */
+            -khtml-user-select: none; /* Konqueror HTML */
+            -moz-user-select: none; /* Old versions of Firefox */
+                -ms-user-select: none; /* Internet Explorer/Edge */
+                    user-select: none; /* Non-prefixed version, currently
+                                        supported by Chrome, Edge, Opera and Firefox */
+    }
+
 
 </style>

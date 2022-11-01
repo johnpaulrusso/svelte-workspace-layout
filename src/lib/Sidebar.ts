@@ -1,5 +1,11 @@
 export const REZISE_MOUSE_TOLERANCE_PX: number = 5;
 
+export enum SidebarOrientation 
+{
+    VERTICAL = 0,
+    HORIZONTAL
+}
+
 export abstract class SidebarModel
 {
     name: string = "";
