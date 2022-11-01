@@ -6,7 +6,7 @@
 
     /* public properties */
     export let borderWidth_px: number = 1;
-    export let borderColor: string = "black";
+    export let borderColor: string = "lightgray";
 
     /* private properties */
     let LEFTBAR_BORDER_STYLE: string = "border-style: none solid none none; border-color: " + 
@@ -110,7 +110,7 @@
 </script>
 
 
-<div class="container noselect" id="workspace_layout" on:mousemove={onMouseMove} on:mousedown={onMouseDown} on:mouseup={onMouseUp}>
+<div class="container noselect" id="workspace_layout" on:mousemove={onMouseMove} on:mousedown={onMouseDown} on:mouseup={onMouseUp} on:mouseleave={onMouseUp}>
     <div class="content">
         <slot name="main-content"><em>no content was provided to this slot.</em></slot>
     </div>

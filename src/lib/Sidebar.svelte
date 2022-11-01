@@ -13,7 +13,7 @@
 
     $: flexDirection = (orientation === SidebarOrientation.VERTICAL) ? "row-reverse" : "column";
     $: textWritingMode = (orientation === SidebarOrientation.VERTICAL) ? "vertical-rl" : "horizontal-tb";
-    $: minSize = (orientation === SidebarOrientation.VERTICAL) ? "min-width: " + MIN_SIDEBAR_SIZE_PX + "px;" : "min-height: " + MIN_SIDEBAR_SIZE_PX + "px;"
+    $: size = (orientation === SidebarOrientation.VERTICAL) ? "width: " + MIN_SIDEBAR_SIZE_PX + "px;" : "height: " + MIN_SIDEBAR_SIZE_PX + "px;"
 
     onMount(() => {
         containerElement = document.getElementById(id);
@@ -21,21 +21,38 @@
 
 </script>
 
+<!-- Dependent on Google material symbols -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 <div class="container" id={id} style="height: {height}; width: {width}; grid-area: {gridarea}; display: flex; flex-direction: {flexDirection}; {border}">
-    <div class="control-bar" style="writing-mode: {textWritingMode}; {minSize}">CONTROL BAR</div>
+    <div class="control-bar" style="writing-mode: {textWritingMode}; {size} flex-direction: row;">
+        <div>CONTROL BAR</div>
+        <div class="close-control-bar"><span class="material-symbols-outlined control-button">expand_more</span></div>
+    </div>
     <slot name="content"/>
 </div>
 
 <style>
     .container{
         grid-area: sidebar;
-
-        display: flex;
-        flex-direction: column;
-        justify-content: stretch;
-
         overflow: hidden;
     }
 
+    .control-bar{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .material-symbols-outlined {
+      font-variation-settings:
+      'FILL' 0,
+      'wght' 200,
+      'GRAD' 0,
+      'opsz' 20;
+      line-height: 2;
+    }
+    .material-symbols-outlined.control-button:hover{
+        background-color:rgb(240, 240, 240);
+    }
 
 </style>
