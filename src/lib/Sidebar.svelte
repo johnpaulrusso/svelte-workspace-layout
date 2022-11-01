@@ -2,10 +2,11 @@
     import {onMount} from "svelte";
 
     export let id = "sidebar";
-    export let height = "";
-    export let width = "";
+    export let height = "auto";
+    export let width = "auto";
     export let gridarea = "";
     export let border = "";
+    export let flexDirection = "column";
 
     let containerElement: HTMLElement | null;
 
@@ -15,16 +16,18 @@
 
 </script>
 
-<div class="container" id={id} style="height: {height}; width: {width}; grid-area: {gridarea}; border: {border}">
+<div class="container" id={id} style="height: {height}; width: {width}; grid-area: {gridarea}; display: flex; flex-direction: {flexDirection}; {border}">
     <slot name="content"/>
 </div>
 
 <style>
     .container{
-        width: 200px;
-
         grid-area: sidebar;
 
-        border: solid 5px blue;
+        display: flex;
+        flex-direction: column;
+        justify-content: stretch;
+
+        overflow: hidden;
     }
 </style>

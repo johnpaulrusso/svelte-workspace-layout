@@ -1,4 +1,4 @@
-export const REZISE_MOUSE_TOLERANCE_PX: number = 2;
+export const REZISE_MOUSE_TOLERANCE_PX: number = 5;
 
 export abstract class SidebarModel
 {

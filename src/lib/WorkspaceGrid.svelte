@@ -3,9 +3,18 @@
     import { LeftbarModel } from "./Leftbar";
     import { BottombarModel } from "./Bottombar";
 
-    const BORDER_WIDTH_PX: number = 5; 
+    /* public properties */
+    export let borderWidth_px: number = 1;
+    export let borderColor: string = "black";
 
     /* private properties */
+    let LEFTBAR_BORDER_STYLE: string = "border-style: none solid none none; border-color: " + 
+                                        borderColor + "; border-width: " + 
+                                        borderWidth_px + "px;";
+    let BOTTOMBAR_BORDER_STYLE: string = "border-style: solid none none none; border-color: " +                                       
+                                        borderColor + "; border-width: " + 
+                                        borderWidth_px + "px;";
+
     let mouseX: number = 0;
     let mouseY: number = 0;
     let containerElement: HTMLElement | null;
@@ -27,8 +36,8 @@
 
         if(!containerElement || !leftSideBar.element || !bottomSideBar.element) {return}
         
-        leftSideBar.updateIsMouseOverBorder(mouseX, BORDER_WIDTH_PX);
-        bottomSideBar.updateIsMouseOverBorder(mouseX, mouseY, BORDER_WIDTH_PX);
+        leftSideBar.updateIsMouseOverBorder(mouseX, borderWidth_px);
+        bottomSideBar.updateIsMouseOverBorder(mouseX, mouseY, borderWidth_px);
 
         updateCursorStyle();
 
@@ -104,11 +113,11 @@
     <div class="content">
         <slot name="main-content"/>
     </div>
-    <Sidebar id={leftSideBar.name} width="{leftSideBar.size}px" border="solid blue {BORDER_WIDTH_PX}px" gridarea="leftbar">
-        <div slot="content">LEFTBAR</div>
+    <Sidebar id={leftSideBar.name} width="{leftSideBar.size}px" border="{LEFTBAR_BORDER_STYLE}" gridarea="leftbar" flexDirection="column">
+        <slot name="leftbar" slot="content"/>
     </Sidebar>
-    <Sidebar id={bottomSideBar.name} height="{bottomSideBar.size}px" width="100%" border="solid red {BORDER_WIDTH_PX}px" gridarea="bottombar">
-        <div slot="content">BOTTOMBAR</div>
+    <Sidebar id={bottomSideBar.name} height="{bottomSideBar.size}px" border="{BOTTOMBAR_BORDER_STYLE}" gridarea="bottombar" flexDirection="row">
+        <slot name="bottombar" slot="content"/>
     </Sidebar>
 </div>
 
@@ -128,6 +137,8 @@
     .content{
         grid-area: content;
 
-        border: solid 5px green;
+        display: flex;
+        flex-direction: column;
     }
+
 </style>
