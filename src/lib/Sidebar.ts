@@ -1,4 +1,5 @@
 export const REZISE_MOUSE_TOLERANCE_PX: number = 5;
+export const MIN_SIDEBAR_SIZE_PX: number = 20;
 
 export enum SidebarOrientation 
 {
@@ -39,7 +40,14 @@ export abstract class SidebarModel
     {
         if(this.isResizing)
         {
-            this.size = size;
+            if(size < MIN_SIDEBAR_SIZE_PX)
+            {
+                this.size = MIN_SIDEBAR_SIZE_PX;
+            }
+            else
+            {
+                this.size = size;
+            }
             return true;
         }
         else

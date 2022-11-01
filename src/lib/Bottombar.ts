@@ -26,7 +26,7 @@ export class BottombarModel extends SidebarModel
     {
         if(super.resizeBase(size) && this.element)
         {
-            this.element.style.height = size + "px";
+            this.element.style.height = this.size + "px";
         }
     }
 

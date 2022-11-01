@@ -24,7 +24,7 @@ export class LeftbarModel extends SidebarModel
     {
         if(super.resizeBase(size) && this.element)
         {
-            this.element.style.width = size + "px";
+            this.element.style.width = this.size + "px";
         }
     }
 }
