@@ -1,5 +1,6 @@
 export const REZISE_MOUSE_TOLERANCE_PX: number = 5;
 export const MIN_SIDEBAR_SIZE_PX: number = 20;
+export const SIDEBAR_AUTO_MINIMIZE_ZONE_PX: number = 50;
 
 export enum SidebarOrientation 
 {
@@ -14,6 +15,7 @@ export abstract class SidebarModel
     isMouseOverBorder: boolean;
     isResizing: boolean;
     element: HTMLElement | null;
+    isMinimized: boolean;
 
     constructor(name: string, size: number) {
         this.name = name;
@@ -21,6 +23,7 @@ export abstract class SidebarModel
         this.isMouseOverBorder = false;
         this.isResizing = false;
         this.element = null;
+        this.isMinimized = false;
     }
 
     setIsResizing()
@@ -40,13 +43,15 @@ export abstract class SidebarModel
     {
         if(this.isResizing)
         {
-            if(size < MIN_SIDEBAR_SIZE_PX)
+            if(size <= MIN_SIDEBAR_SIZE_PX + SIDEBAR_AUTO_MINIMIZE_ZONE_PX)
             {
                 this.size = MIN_SIDEBAR_SIZE_PX;
+                this.isMinimized = true;
             }
             else
             {
                 this.size = size;
+                this.isMinimized = false;
             }
             return true;
         }

@@ -1,5 +1,6 @@
 <script lang="ts">
     import {onMount} from "svelte";
+
     import {SidebarOrientation, MIN_SIDEBAR_SIZE_PX} from "./Sidebar";
 
     export let id = "sidebar";
@@ -10,6 +11,7 @@
     export let orientation: SidebarOrientation = SidebarOrientation.VERTICAL;
 
     let containerElement: HTMLElement | null;
+    let controlButtonSymbolName = "expand_more";
 
     $: flexDirection = (orientation === SidebarOrientation.VERTICAL) ? "row-reverse" : "column";
     $: textWritingMode = (orientation === SidebarOrientation.VERTICAL) ? "vertical-rl" : "horizontal-tb";
@@ -19,6 +21,7 @@
         containerElement = document.getElementById(id);
     });
 
+    export const setIsMinized = (isMinimized: boolean) => {controlButtonSymbolName = isMinimized ? "expand_less" : "expand_more";};
 </script>
 
 <!-- Dependent on Google material symbols -->
@@ -26,7 +29,7 @@
 <div class="container" id={id} style="height: {height}; width: {width}; grid-area: {gridarea}; display: flex; flex-direction: {flexDirection}; {border}">
     <div class="control-bar" style="writing-mode: {textWritingMode}; {size} flex-direction: row;">
         <div>CONTROL BAR</div>
-        <div class="close-control-bar"><span class="material-symbols-outlined control-button">expand_more</span></div>
+        <div class="close-control-bar"><span class="material-symbols-outlined control-button">{controlButtonSymbolName}</span></div>
     </div>
     <slot name="content"/>
 </div>

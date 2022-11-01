@@ -23,6 +23,9 @@
     let leftSideBar: LeftbarModel = new LeftbarModel("leftsidebar", 200);
     let bottomSideBar: BottombarModel = new BottombarModel("bottomsidebar", 200);
 
+    let setLeftbarIsMinimized = (isMinimized: boolean) => {};
+    let setBottombarIsMinimized = (isMinimized: boolean) => {};
+
     /**
      * This component must always monitor mouse movement to handle 
      * seemless sub-element resizing. 
@@ -44,6 +47,9 @@
 
         leftSideBar.resize(mouseX);
         bottomSideBar.resize(containerElement.getBoundingClientRect().height - mouseY);
+
+        setLeftbarIsMinimized(leftSideBar.isMinimized);
+        setBottombarIsMinimized(bottomSideBar.isMinimized);
     }
 
     /**
@@ -114,10 +120,15 @@
     <div class="content">
         <slot name="main-content"><em>no content was provided to this slot.</em></slot>
     </div>
-    <Sidebar id={leftSideBar.name} width="{leftSideBar.size}px" border="{LEFTBAR_BORDER_STYLE}" gridarea="leftbar" orientation={SidebarOrientation.VERTICAL}>
+    <Sidebar id={leftSideBar.name} width="{leftSideBar.size}px" border="{LEFTBAR_BORDER_STYLE}" gridarea="leftbar" orientation={SidebarOrientation.VERTICAL} bind:setIsMinized={setLeftbarIsMinimized}> 
         <slot name="leftbar" slot="content"><em>no content was provided to this slot.</em></slot>
     </Sidebar>
-    <Sidebar id={bottomSideBar.name} height="{bottomSideBar.size}px" border="{BOTTOMBAR_BORDER_STYLE}" gridarea="bottombar" orientation={SidebarOrientation.HORIZONTAL}>
+    <Sidebar id={bottomSideBar.name} 
+            height="{bottomSideBar.size}px" 
+            border="{BOTTOMBAR_BORDER_STYLE}" 
+            gridarea="bottombar" 
+            orientation={SidebarOrientation.HORIZONTAL} 
+            bind:setIsMinized={setBottombarIsMinimized}>
         <slot name="bottombar" slot="content"><em>no content was provided to this slot.</em></slot>
     </Sidebar>
 </div>
