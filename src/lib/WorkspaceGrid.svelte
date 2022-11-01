@@ -111,13 +111,13 @@
 
 <div class="container" id="workspace_layout" on:mousemove={onMouseMove} on:mousedown={onMouseDown} on:mouseup={onMouseUp}>
     <div class="content">
-        <slot name="main-content"/>
+        <slot name="main-content"><em>no content was provided to this slot.</em></slot>
     </div>
     <Sidebar id={leftSideBar.name} width="{leftSideBar.size}px" border="{LEFTBAR_BORDER_STYLE}" gridarea="leftbar" flexDirection="column">
-        <slot name="leftbar" slot="content"/>
+        <slot name="leftbar" slot="content"><em>no content was provided to this slot.</em></slot>
     </Sidebar>
     <Sidebar id={bottomSideBar.name} height="{bottomSideBar.size}px" border="{BOTTOMBAR_BORDER_STYLE}" gridarea="bottombar" flexDirection="row">
-        <slot name="bottombar" slot="content"/>
+        <slot name="bottombar" slot="content"><em>no content was provided to this slot.</em></slot>
     </Sidebar>
 </div>
 
