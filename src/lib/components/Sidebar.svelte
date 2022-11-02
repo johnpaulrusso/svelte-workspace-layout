@@ -1,29 +1,20 @@
 <script lang="ts">
     import {onMount, createEventDispatcher} from "svelte";
-    import {SidebarOrientation, MIN_SIDEBAR_SIZE_PX} from "./Sidebar";
+    import {MIN_SIDEBAR_SIZE_PX} from "../controllers/SidebarController";
+    import type {ISidebarModel} from "../models/SidebarModel"
+    import {SidebarOrientation} from "../models/SidebarModel"
 
     const dispatch = createEventDispatcher();
 
-    export let id = "sidebar";
-    export let height = "auto";
-    export let width = "auto";
-    export let gridarea = "";
-    export let border = "";
-    export let orientation: SidebarOrientation = SidebarOrientation.VERTICAL;
-    export let isMinimized: boolean;
+    export let model: ISidebarModel;
 
-    let containerElement: HTMLElement | null;
     let controlButtonSymbolName = "expand_more";
 
-    $: flexDirection = (orientation === SidebarOrientation.VERTICAL) ? "row-reverse" : "column";
-    $: textWritingMode = (orientation === SidebarOrientation.VERTICAL) ? "vertical-rl" : "horizontal-tb";
-    $: size = (orientation === SidebarOrientation.VERTICAL) ? "width: " + MIN_SIDEBAR_SIZE_PX + "px;" : "height: " + MIN_SIDEBAR_SIZE_PX + "px;"
+    $: flexDirection = (model.orientation === SidebarOrientation.VERTICAL) ? "row-reverse" : "column";
+    $: textWritingMode = (model.orientation === SidebarOrientation.VERTICAL) ? "vertical-rl" : "horizontal-tb";
+    $: size = (model.orientation === SidebarOrientation.VERTICAL) ? "width: " + MIN_SIDEBAR_SIZE_PX + "px;" : "height: " + MIN_SIDEBAR_SIZE_PX + "px;"
 
-    onMount(() => {
-        containerElement = document.getElementById(id);
-    });
-
-    $: controlButtonSymbolName = isMinimized ? "expand_less" : "expand_more";
+    $: controlButtonSymbolName = model.isMinimized ? "expand_less" : "expand_more";
 
     function onClickOpenClose()
     {
@@ -34,7 +25,7 @@
 
 <!-- Dependent on Google material symbols -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-<div class="container" id={id} style="height: {height}; width: {width}; grid-area: {gridarea}; display: flex; flex-direction: {flexDirection}; {border}">
+<div class="container" id={model.name} style="height: {model.height}; width: {model.width}; grid-area: {model.gridarea}; display: flex; flex-direction: {flexDirection}; {model.border}">
     <div class="control-bar" style="writing-mode: {textWritingMode}; {size} flex-direction: row;">
         <div>CONTROL BAR</div>
         <button class="control-bar-open-close" on:click={onClickOpenClose}><span class="material-symbols-outlined control-button">{controlButtonSymbolName}</span></button>

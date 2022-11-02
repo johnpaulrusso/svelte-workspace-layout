@@ -1,8 +1,7 @@
 <script lang="ts">
-    import Sidebar from "./Sidebar.svelte";
-    import { LeftbarModel } from "./Leftbar";
-    import { BottombarModel } from "./Bottombar";
-    import {SidebarOrientation} from "./Sidebar";
+    import Sidebar from "./components/Sidebar.svelte";
+    import { LeftbarController } from "./controllers/LeftbarController";
+    import { BottombarController } from "./controllers/BottombarController";
 
     /* public properties */
     export let borderWidth_px: number = 1;
@@ -20,8 +19,8 @@
     let mouseY: number = 0;
     let containerElement: HTMLElement | null;
 
-    let leftSideBar: LeftbarModel = new LeftbarModel("leftsidebar", 200);
-    let bottomSideBar: BottombarModel = new BottombarModel("bottomsidebar", 200);
+    let leftSideBar: LeftbarController = new LeftbarController("leftsidebar", 200);
+    let bottomSideBar: BottombarController = new BottombarController("bottomsidebar", 200);
 
     /**
      * This component must always monitor mouse movement to handle 
@@ -78,11 +77,11 @@
         }
         if(!bottomSideBar.element)
         {
-            bottomSideBar.element = document.getElementById(bottomSideBar.name);
+            bottomSideBar.element = document.getElementById(bottomSideBar.model.name);
         }
         if(!leftSideBar.element)
         {
-            leftSideBar.element = document.getElementById(leftSideBar.name);
+            leftSideBar.element = document.getElementById(leftSideBar.model.name);
         }
     }
 
@@ -94,15 +93,15 @@
         }
         if(!containerElement) return;
 
-        if((leftSideBar.isMouseOverBorder || leftSideBar.isResizing) && (bottomSideBar.isMouseOverBorder || bottomSideBar.isResizing))
+        if((leftSideBar.model.isMouseOverBorder || leftSideBar.model.isResizing) && (bottomSideBar.model.isMouseOverBorder || bottomSideBar.model.isResizing))
         {
             containerElement.style.cursor = "move";
         }
-        else if(leftSideBar.isMouseOverBorder || leftSideBar.isResizing)
+        else if(leftSideBar.model.isMouseOverBorder || leftSideBar.model.isResizing)
         {
             containerElement.style.cursor = "col-resize";
         }
-        else if(bottomSideBar.isMouseOverBorder || bottomSideBar.isResizing)
+        else if(bottomSideBar.model.isMouseOverBorder || bottomSideBar.model.isResizing)
         {
             containerElement.style.cursor = "row-resize";
         }
@@ -129,21 +128,11 @@
     <div class="content">
         <slot name="main-content"><em>no content was provided to this slot.</em></slot>
     </div>
-    <Sidebar id={leftSideBar.name} 
-             width="{leftSideBar.size}px" 
-             border="{LEFTBAR_BORDER_STYLE}" 
-             gridarea="leftbar" 
-             orientation={SidebarOrientation.VERTICAL}
-             isMinimized={leftSideBar.isMinimized}
+    <Sidebar model={leftSideBar.model}
              on:open_close_event={onOpenCloseLeftbar}>
         <slot name="leftbar" slot="content"><em>no content was provided to this slot.</em></slot>
     </Sidebar>
-    <Sidebar id={bottomSideBar.name} 
-            height="{bottomSideBar.size}px" 
-            border="{BOTTOMBAR_BORDER_STYLE}" 
-            gridarea="bottombar" 
-            orientation={SidebarOrientation.HORIZONTAL}
-            isMinimized={bottomSideBar.isMinimized}
+    <Sidebar model={bottomSideBar.model}
             on:open_close_event={onOpenCloseBottombar}>
         <slot name="bottombar" slot="content"><em>no content was provided to this slot.</em></slot>
     </Sidebar>
