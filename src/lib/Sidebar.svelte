@@ -1,7 +1,8 @@
 <script lang="ts">
-    import {onMount} from "svelte";
-
+    import {onMount, createEventDispatcher} from "svelte";
     import {SidebarOrientation, MIN_SIDEBAR_SIZE_PX} from "./Sidebar";
+
+    const dispatch = createEventDispatcher();
 
     export let id = "sidebar";
     export let height = "auto";
@@ -23,6 +24,12 @@
     });
 
     $: controlButtonSymbolName = isMinimized ? "expand_less" : "expand_more";
+
+    function onClickOpenClose()
+    {
+        dispatch("open_close_event");
+    }
+    
 </script>
 
 <!-- Dependent on Google material symbols -->
@@ -30,7 +37,7 @@
 <div class="container" id={id} style="height: {height}; width: {width}; grid-area: {gridarea}; display: flex; flex-direction: {flexDirection}; {border}">
     <div class="control-bar" style="writing-mode: {textWritingMode}; {size} flex-direction: row;">
         <div>CONTROL BAR</div>
-        <div class="close-control-bar"><span class="material-symbols-outlined control-button">{controlButtonSymbolName}</span></div>
+        <button class="control-bar-open-close" on:click={onClickOpenClose}><span class="material-symbols-outlined control-button">{controlButtonSymbolName}</span></button>
     </div>
     <slot name="content"/>
 </div>
@@ -55,8 +62,16 @@
       'opsz' 20;
       line-height: 2;
     }
+
     .material-symbols-outlined.control-button:hover{
         background-color:rgb(240, 240, 240);
+    }
+
+    button{
+        background: none;
+        border: none;
+        margin: 0;
+        padding: 0;
     }
 
 </style>

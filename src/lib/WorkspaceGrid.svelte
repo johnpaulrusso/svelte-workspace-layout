@@ -111,6 +111,17 @@
             containerElement.style.cursor = "default";
         }
     }
+
+    function onOpenCloseLeftbar() {
+        leftSideBar.toggleOpenClose();
+        leftSideBar = leftSideBar;
+    }   
+
+    function onOpenCloseBottombar() {
+        bottomSideBar.toggleOpenClose();
+        bottomSideBar = bottomSideBar;
+    }   
+
 </script>
 
 
@@ -123,7 +134,8 @@
              border="{LEFTBAR_BORDER_STYLE}" 
              gridarea="leftbar" 
              orientation={SidebarOrientation.VERTICAL}
-             isMinimized={leftSideBar.isMinimized}>
+             isMinimized={leftSideBar.isMinimized}
+             on:open_close_event={onOpenCloseLeftbar}>
         <slot name="leftbar" slot="content"><em>no content was provided to this slot.</em></slot>
     </Sidebar>
     <Sidebar id={bottomSideBar.name} 
@@ -131,7 +143,8 @@
             border="{BOTTOMBAR_BORDER_STYLE}" 
             gridarea="bottombar" 
             orientation={SidebarOrientation.HORIZONTAL}
-            isMinimized={bottomSideBar.isMinimized}>
+            isMinimized={bottomSideBar.isMinimized}
+            on:open_close_event={onOpenCloseBottombar}>
         <slot name="bottombar" slot="content"><em>no content was provided to this slot.</em></slot>
     </Sidebar>
 </div>

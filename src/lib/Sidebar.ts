@@ -1,6 +1,7 @@
 export const REZISE_MOUSE_TOLERANCE_PX: number = 5;
 export const MIN_SIDEBAR_SIZE_PX: number = 20;
 export const SIDEBAR_AUTO_MINIMIZE_ZONE_PX: number = 50;
+export const DEFAULT_SIZE_PX: number = 200;
 
 export enum SidebarOrientation 
 {
@@ -58,6 +59,20 @@ export abstract class SidebarModel
         else
         {
             return false;
+        }
+    }
+
+    toggleOpenClose()
+    {
+        if(this.isMinimized)
+        {
+            this.size = DEFAULT_SIZE_PX;
+            this.isMinimized = false;
+        }
+        else
+        {
+            this.size = MIN_SIDEBAR_SIZE_PX;
+            this.isMinimized = true;
         }
     }
 
