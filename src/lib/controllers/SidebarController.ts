@@ -24,7 +24,9 @@ export abstract class SidebarController
             border: "",
             isMouseOverBorder: false,
             isResizing: false,
-            isMinimized: false
+            isMinimized: false,
+            components: [],
+            selectedComponentIndex: 0
         }
         this.element = null;
     }

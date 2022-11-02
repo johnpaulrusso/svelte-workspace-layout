@@ -1,19 +1,24 @@
 <script lang="ts">
+    import {onMount} from "svelte";
     import Sidebar from "./components/Sidebar.svelte";
     import { LeftbarController } from "./controllers/LeftbarController";
     import { BottombarController } from "./controllers/BottombarController";
+	import { WorkspaceLocation, type IWorkspaceComponentModel } from "./models/WorkspaceComponentModel";
 
     /* public properties */
     export let borderWidth_px: number = 1;
-    export let borderColor: string = "lightgray";
+   // export let borderColor: string = "lightgray";
+
+    export let components: Array<IWorkspaceComponentModel> = [];
 
     /* private properties */
+    /*
     let LEFTBAR_BORDER_STYLE: string = "border-style: none solid none none; border-color: " + 
                                         borderColor + "; border-width: " + 
                                         borderWidth_px + "px;";
     let BOTTOMBAR_BORDER_STYLE: string = "border-style: solid none none none; border-color: " +                                       
                                         borderColor + "; border-width: " + 
-                                        borderWidth_px + "px;";
+                                        borderWidth_px + "px;";*/
 
     let mouseX: number = 0;
     let mouseY: number = 0;
@@ -21,6 +26,9 @@
 
     let leftSideBar: LeftbarController = new LeftbarController("leftsidebar", 200);
     let bottomSideBar: BottombarController = new BottombarController("bottomsidebar", 200);
+
+    let leftSidebarComponents = components.filter(comp => comp.initialLocation === WorkspaceLocation.LEFTBAR);
+    let bottomSidebarComponents = components.filter(comp => comp.initialLocation === WorkspaceLocation.BOTTOMBAR);
 
     /**
      * This component must always monitor mouse movement to handle 
@@ -129,12 +137,12 @@
         <slot name="main-content"><em>no content was provided to this slot.</em></slot>
     </div>
     <Sidebar model={leftSideBar.model}
+             components={leftSidebarComponents}
              on:open_close_event={onOpenCloseLeftbar}>
-        <slot name="leftbar" slot="content"><em>no content was provided to this slot.</em></slot>
     </Sidebar>
     <Sidebar model={bottomSideBar.model}
+            components={bottomSidebarComponents}
             on:open_close_event={onOpenCloseBottombar}>
-        <slot name="bottombar" slot="content"><em>no content was provided to this slot.</em></slot>
     </Sidebar>
 </div>
 

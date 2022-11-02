@@ -1,3 +1,5 @@
+import type { IWorkspaceComponentModel } from "./WorkspaceComponentModel";
+
 export enum SidebarOrientation 
 {
     VERTICAL = 0,
@@ -26,4 +28,7 @@ export interface ISidebarModel
     isMouseOverBorder: boolean;
     isResizing: boolean;
     isMinimized: boolean;
+
+    /*Child Components*/
+    selectedComponentIndex: number;
 }

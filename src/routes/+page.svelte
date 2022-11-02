@@ -1,14 +1,21 @@
 <script lang="ts">
     import WorkspaceGrid from '$lib/WorkspaceGrid.svelte'
+    import TestComponent from '$lib/test/TestComponent.svelte';
+	import { WorkspaceLocation} from '$lib/models/WorkspaceComponentModel';
+    import type { IWorkspaceComponentModel} from '$lib/models/WorkspaceComponentModel';
+
+    let myComponents: Array<IWorkspaceComponentModel> = [
+        {componentType: TestComponent, properties: {txt: "MAIN CONTENT"}, initialLocation: WorkspaceLocation.MAIN},
+        {componentType: TestComponent, properties: {txt: "LEFTBAR"}, initialLocation: WorkspaceLocation.LEFTBAR},
+        {componentType: TestComponent, properties: {txt: "BOTTOMBAR"}, initialLocation: WorkspaceLocation.BOTTOMBAR},
+    ];
 </script>
 
 <div class="container">
-<WorkspaceGrid>
+<WorkspaceGrid components={myComponents}>
     <div slot="main-content" class="my-main-content">
         CONTENT
     </div>
-    <div slot="leftbar" class="my-leftbar" >LEFTBAR</div>
-    <div slot="bottombar" class="my-bottombar" >BOTTOMBAR</div>
 </WorkspaceGrid>
 </div>
 
@@ -28,21 +35,5 @@
         /**Flex grow must be set if you want the content to fill up empty space.*/
         flex-grow: 1;
     }
-
-    .my-leftbar{
-        text-align: center;
-        background-color:lavender;
-
-        /**Flex grow must be set if you want the content to fill up sidebar space.*/
-        flex-grow: 1;
-    }
-    .my-bottombar{
-        text-align: center;
-        background-color:lightcyan;
-
-        /**Flex grow must be set if you want the content to fill up sidebar space.*/
-        flex-grow: 1;
-    }
-
 
 </style>
