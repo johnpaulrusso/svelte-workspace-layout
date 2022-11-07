@@ -28,7 +28,8 @@ export interface ISidebarModel
     isMouseOverBorder: boolean;
     isResizing: boolean;
     isMinimized: boolean;
+    isDisplayed: boolean;
 
     /*Child Components*/
-    selectedComponentIndex: number;
+    selectedTabName: string
 }

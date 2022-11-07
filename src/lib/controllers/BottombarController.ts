@@ -14,7 +14,7 @@ export class BottombarController extends SidebarController
 
     updateIsMouseOverBorder(mouseX: number, mouseY: number, borderWidth: number)
     {
-        if(!this.element) return;
+        if(!this.element || !this.model.isDisplayed) return;
 
         let rec = this.element.getBoundingClientRect();
         let barX = rec.left;

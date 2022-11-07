@@ -8,20 +8,22 @@
 
     const onClickB = (event: Event) =>
     {
-        myComponents[1].properties.txt = "WORLD";
+        myComponents[0].properties.txt = "WORLD";
         myComponents = myComponents;
     }
 
     let myComponents: Array<IWorkspaceComponentModel> = [];
 
     let comp1: IWorkspaceComponentModel = {
+        name: "A1",
         componentType: TestComponentA, 
         properties: {txt: "HELLO", num: 12}, 
         events: [],
-        initialLocation: WorkspaceLocation.MAIN
+        initialLocation: WorkspaceLocation.BOTTOMBAR
     };
     
     let comp2: IWorkspaceComponentModel = {
+        name: "B1",
         componentType: TestComponentB, 
         properties: {id: "b1", txt: "HELLO"}, 
         events: [{name: "click-b", callback: onClickB}], 
@@ -29,10 +31,11 @@
     };
 
     let comp3: IWorkspaceComponentModel = {
+        name: "A2",
         componentType: TestComponentA, 
         properties: {txt: "HELLO", num: 12}, 
         events: [], 
-        initialLocation: WorkspaceLocation.LEFTBAR
+        initialLocation: WorkspaceLocation.BOTTOMBAR
     };
 
     myComponents = [...myComponents, comp1, comp2, comp3];

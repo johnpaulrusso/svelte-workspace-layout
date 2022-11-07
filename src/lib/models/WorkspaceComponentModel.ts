@@ -9,6 +9,7 @@ export enum WorkspaceLocation
 
 export interface IWorkspaceComponentModel
 {
+    name: string
     componentType: ComponentType;
     properties: Record<string, any>;
     events: Array<IEventCallback>;

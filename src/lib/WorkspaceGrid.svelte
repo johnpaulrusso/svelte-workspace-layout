@@ -29,6 +29,16 @@
 
     $: leftSidebarComponents = components.filter(comp => comp.initialLocation === WorkspaceLocation.LEFTBAR);
     $: bottomSidebarComponents = components.filter(comp => comp.initialLocation === WorkspaceLocation.BOTTOMBAR);
+    $: if(leftSidebarComponents.length > 0){
+        leftSideBar.model.isDisplayed = true;
+    }else{
+        leftSideBar.model.isDisplayed = false;
+    }
+    $: if(bottomSidebarComponents.length > 0){
+        bottomSideBar.model.isDisplayed = true;
+    }else{
+        bottomSideBar.model.isDisplayed = false;
+    }
 
     /**
      * This component must always monitor mouse movement to handle 
@@ -42,7 +52,7 @@
 
         getElementsIfNull();
 
-        if(!containerElement || !leftSideBar.element || !bottomSideBar.element) {return}
+        if(!containerElement) {return}
         
         leftSideBar.updateIsMouseOverBorder(mouseX, mouseY, borderWidth_px);
         bottomSideBar.updateIsMouseOverBorder(mouseX, mouseY, borderWidth_px);
@@ -129,6 +139,16 @@
         bottomSideBar = bottomSideBar;
     }   
 
+    function onChangeTabLeftbar(event: CustomEvent) {
+        leftSideBar.changeTab(event.detail);
+        leftSideBar = bottomSideBar;
+    }   
+
+    function onChangeTabBottombar(event: CustomEvent) {
+        bottomSideBar.changeTab(event.detail);
+        bottomSideBar = bottomSideBar;
+    }   
+
 </script>
 
 
@@ -138,11 +158,13 @@
     </div>
     <Sidebar model={leftSideBar.model}
              components={leftSidebarComponents}
-             on:open_close_event={onOpenCloseLeftbar}>
+             on:open_close_event={onOpenCloseLeftbar}
+             on:tab_change_event={onChangeTabLeftbar}>
     </Sidebar>
     <Sidebar model={bottomSideBar.model}
             components={bottomSidebarComponents}
-            on:open_close_event={onOpenCloseBottombar}>
+            on:open_close_event={onOpenCloseBottombar}
+            on:tab_change_event={onChangeTabBottombar}>
     </Sidebar>
 </div>
 

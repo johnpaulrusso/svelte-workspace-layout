@@ -25,15 +25,15 @@ export abstract class SidebarController
             isMouseOverBorder: false,
             isResizing: false,
             isMinimized: false,
-            components: [],
-            selectedComponentIndex: 0
+            selectedTabName: "",
+            isDisplayed: false,
         }
         this.element = null;
     }
 
     setIsResizing()
     {
-        if(this.model.isMouseOverBorder)
+        if(this.model.isMouseOverBorder && this.model.isDisplayed)
         {
             this.model.isResizing = true;
         }
@@ -46,7 +46,7 @@ export abstract class SidebarController
 
     resize(size: number): boolean
     {
-        if(this.model.isResizing)
+        if(this.model.isResizing && this.model.isDisplayed)
         {
             if(size <= MIN_SIDEBAR_SIZE_PX + SIDEBAR_AUTO_MINIMIZE_ZONE_PX)
             {
@@ -83,6 +83,14 @@ export abstract class SidebarController
         }
 
         this.resizeCustom();
+    }
+
+    changeTab(tabName: string | null)
+    {
+        if(tabName)
+        {
+            this.model.selectedTabName = tabName
+        }
     }
 
     abstract updateIsMouseOverBorder(mouseX: number, mouseY: number, borderWidth: number): void

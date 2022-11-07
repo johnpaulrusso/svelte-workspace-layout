@@ -11,13 +11,25 @@
     export let components: Array<IWorkspaceComponentModel>;
 
     $: flexDirection = (model.orientation === SidebarOrientation.VERTICAL) ? "row-reverse" : "column";
-    $: textWritingMode = (model.orientation === SidebarOrientation.VERTICAL) ? "vertical-rl" : "horizontal-tb";
     $: size = (model.orientation === SidebarOrientation.VERTICAL) ? "width: " + MIN_SIDEBAR_SIZE_PX + "px;" : "height: " + MIN_SIDEBAR_SIZE_PX + "px;"
     $: controlButtonSymbolName = model.isMinimized ? "expand_less" : "expand_more";
+
+    //selectedComponentIndex must be > 0.
+    $: selectedComponentIndex = components.findIndex(c => c.name == model.selectedTabName);
+    $: if(selectedComponentIndex < 0) {selectedComponentIndex = 0}
 
     function onClickOpenClose()
     {
         dispatch("open_close_event");
+    }
+
+    function onClickTab(event: MouseEvent)
+    {
+        let element = event.target as HTMLElement
+        if(element)
+        {
+            dispatch("tab_change_event", element.getAttribute("name"));
+        }
     }
     
 </script>
@@ -26,13 +38,16 @@
 {#if components.length > 0}
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 <div class="container" id={model.name} style="height: {model.height}; width: {model.width}; grid-area: {model.gridarea}; display: flex; flex-direction: {flexDirection}; {model.border}">
-    <div class="control-bar" style="writing-mode: {textWritingMode}; {size} flex-direction: row;">
-        <div>CONTROL BAR</div>
+    <div class="control-bar" style="{size} flex-direction: row;">
+        <div class="tabs">
+        {#each components as c}
+            <button class="tab" name="{c.name}" on:click={onClickTab}>{c.name}</button>
+        {/each}
+        </div>
         <button class="control-bar-open-close" on:click={onClickOpenClose}><span class="material-symbols-outlined control-button">{controlButtonSymbolName}</span></button>
     </div>
-    {#each components as c}
-        <svelte:component this={c.componentType} {...c.properties}/>
-    {/each}
+    <svelte:component this={components[selectedComponentIndex].componentType} {...components[selectedComponentIndex].properties}/>
+
 </div>
 {/if}
 <style>
@@ -45,7 +60,18 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        z-index: 0;
+    }
+
+    .tabs{
+        display: flex;
+    }
+    .tab{
+        display: inline-block;
+        border: solid black 1px;
+        min-width: 60px;
+    }
+    .tab:hover{
+        background-color:rgb(240, 240, 240);
     }
 
     .material-symbols-outlined {
