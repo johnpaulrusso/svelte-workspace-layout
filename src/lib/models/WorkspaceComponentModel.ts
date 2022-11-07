@@ -1,4 +1,4 @@
-import type { ComponentType } from "svelte";
+import type { ComponentEvents, ComponentProps, ComponentType, SvelteComponent } from "svelte";
 
 export enum WorkspaceLocation 
 {
@@ -11,5 +11,12 @@ export interface IWorkspaceComponentModel
 {
     componentType: ComponentType;
     properties: Record<string, any>;
+    events: Array<IEventCallback>;
     initialLocation: WorkspaceLocation;
+}
+
+export interface IEventCallback
+{
+    name: string,
+    callback: (event: Event) => void
 }

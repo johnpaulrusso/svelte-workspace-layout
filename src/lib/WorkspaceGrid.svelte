@@ -27,8 +27,8 @@
     let leftSideBar: LeftbarController = new LeftbarController("leftsidebar", 200);
     let bottomSideBar: BottombarController = new BottombarController("bottomsidebar", 200);
 
-    let leftSidebarComponents = components.filter(comp => comp.initialLocation === WorkspaceLocation.LEFTBAR);
-    let bottomSidebarComponents = components.filter(comp => comp.initialLocation === WorkspaceLocation.BOTTOMBAR);
+    $: leftSidebarComponents = components.filter(comp => comp.initialLocation === WorkspaceLocation.LEFTBAR);
+    $: bottomSidebarComponents = components.filter(comp => comp.initialLocation === WorkspaceLocation.BOTTOMBAR);
 
     /**
      * This component must always monitor mouse movement to handle 

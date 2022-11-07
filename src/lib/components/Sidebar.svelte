@@ -30,7 +30,9 @@
         <div>CONTROL BAR</div>
         <button class="control-bar-open-close" on:click={onClickOpenClose}><span class="material-symbols-outlined control-button">{controlButtonSymbolName}</span></button>
     </div>
-    <svelte:component this={components[0].componentType} {...components[0].properties}/>
+    {#each components as c}
+        <svelte:component this={c.componentType} {...c.properties}/>
+    {/each}
 </div>
 {/if}
 <style>

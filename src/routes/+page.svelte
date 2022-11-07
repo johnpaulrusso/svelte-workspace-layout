@@ -1,14 +1,49 @@
 <script lang="ts">
     import WorkspaceGrid from '$lib/WorkspaceGrid.svelte'
-    import TestComponent from '$lib/test/TestComponent.svelte';
+    import TestComponentA from '$lib/test/TestComponentA.svelte';
+    import TestComponentB from '$lib/test/TestComponentB.svelte';
 	import { WorkspaceLocation} from '$lib/models/WorkspaceComponentModel';
     import type { IWorkspaceComponentModel} from '$lib/models/WorkspaceComponentModel';
+    import {onMount} from "svelte";
 
-    let myComponents: Array<IWorkspaceComponentModel> = [
-        {componentType: TestComponent, properties: {txt: "MAIN CONTENT"}, initialLocation: WorkspaceLocation.MAIN},
-        {componentType: TestComponent, properties: {txt: "LEFTBAR"}, initialLocation: WorkspaceLocation.LEFTBAR},
-        {componentType: TestComponent, properties: {txt: "BOTTOMBAR"}, initialLocation: WorkspaceLocation.BOTTOMBAR},
-    ];
+    const onClickB = (event: Event) =>
+    {
+        myComponents[1].properties.txt = "WORLD";
+        myComponents = myComponents;
+    }
+
+    let myComponents: Array<IWorkspaceComponentModel> = [];
+
+    let comp1: IWorkspaceComponentModel = {
+        componentType: TestComponentA, 
+        properties: {txt: "HELLO", num: 12}, 
+        events: [],
+        initialLocation: WorkspaceLocation.MAIN
+    };
+    
+    let comp2: IWorkspaceComponentModel = {
+        componentType: TestComponentB, 
+        properties: {id: "b1", txt: "HELLO"}, 
+        events: [{name: "click-b", callback: onClickB}], 
+        initialLocation: WorkspaceLocation.BOTTOMBAR
+    };
+
+    let comp3: IWorkspaceComponentModel = {
+        componentType: TestComponentA, 
+        properties: {txt: "HELLO", num: 12}, 
+        events: [], 
+        initialLocation: WorkspaceLocation.LEFTBAR
+    };
+
+    myComponents = [...myComponents, comp1, comp2, comp3];
+
+    onMount(() => {
+        myComponents.forEach(c => {
+            c.events.forEach(e => {
+                document.addEventListener(e.name, e.callback);
+            })
+        })
+    })
 </script>
 
 <div class="container">
