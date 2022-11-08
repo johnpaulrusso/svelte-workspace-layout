@@ -141,7 +141,7 @@
 
     function onChangeTabLeftbar(event: CustomEvent) {
         leftSideBar.changeTab(event.detail);
-        leftSideBar = bottomSideBar;
+        leftSideBar = leftSideBar;
     }   
 
     function onChangeTabBottombar(event: CustomEvent) {

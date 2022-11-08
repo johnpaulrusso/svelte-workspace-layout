@@ -10,8 +10,8 @@
     export let model: ISidebarModel;
     export let components: Array<IWorkspaceComponentModel>;
 
-    $: flexDirection = (model.orientation === SidebarOrientation.VERTICAL) ? "row-reverse" : "column";
-    $: size = (model.orientation === SidebarOrientation.VERTICAL) ? "width: " + MIN_SIDEBAR_SIZE_PX + "px;" : "height: " + MIN_SIDEBAR_SIZE_PX + "px;"
+    $: vertical = (model.orientation === SidebarOrientation.VERTICAL) ? "vertical" : "";
+    $: size = (model.orientation === SidebarOrientation.VERTICAL) ? "width: " + MIN_SIDEBAR_SIZE_PX + "px;" : "height: " + MIN_SIDEBAR_SIZE_PX + "px;";
     $: controlButtonSymbolName = model.isMinimized ? "expand_less" : "expand_more";
 
     //selectedComponentIndex must be > 0.
@@ -37,14 +37,14 @@
 <!-- Dependent on Google material symbols -->
 {#if components.length > 0}
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-<div class="container" id={model.name} style="height: {model.height}; width: {model.width}; grid-area: {model.gridarea}; display: flex; flex-direction: {flexDirection}; {model.border}">
-    <div class="control-bar" style="{size} flex-direction: row;">
+<div class="container {vertical}" id={model.name} style="height: {model.height}; width: {model.width}; grid-area: {model.gridarea}; {model.border}">
+    <div class="control-bar {vertical}" style="{size} ">
         <div class="tabs">
         {#each components as c}
-            <button class="tab" name="{c.name}" on:click={onClickTab}>{c.name}</button>
+            <button class="tab {vertical}" name="{c.name}" on:click={onClickTab}>{c.name}</button>
         {/each}
         </div>
-        <button class="control-bar-open-close" on:click={onClickOpenClose}><span class="material-symbols-outlined control-button">{controlButtonSymbolName}</span></button>
+        <span class="material-symbols-outlined control-button" on:click={onClickOpenClose} on:keydown={()=>{}}>{controlButtonSymbolName}</span>
     </div>
     <svelte:component this={components[selectedComponentIndex].componentType} {...components[selectedComponentIndex].properties}/>
 
@@ -53,13 +53,24 @@
 <style>
     .container{
         grid-area: sidebar;
-        overflow: hidden;
+        overflow: none;
+
+        display: flex; 
+        flex-direction: column;
+    }
+    .container.vertical{
+        flex-direction: row-reverse;
     }
 
     .control-bar{
         display: flex;
+        flex-direction: row;
         justify-content: space-between;
         align-items: center;
+    }
+    .control-bar.vertical{
+        writing-mode: sideways-lr;
+        justify-content:flex-end;
     }
 
     .tabs{
@@ -69,6 +80,10 @@
         display: inline-block;
         border: solid black 1px;
         min-width: 60px;
+    }
+    .tab.vertical{
+        min-width: 20px;
+        min-height: 60px;
     }
     .tab:hover{
         background-color:rgb(240, 240, 240);
@@ -80,7 +95,6 @@
       'wght' 200,
       'GRAD' 0,
       'opsz' 20;
-      line-height: 2;
     }
 
     .material-symbols-outlined.control-button:hover{

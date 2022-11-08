@@ -13,13 +13,19 @@
     }
 </script>
 
-<div class="container" id={id}>{txt}</div>
-<button on:click={onClick}>Do Stuff!</button>
+<div class="container" id={id}>
+    {txt}
+    <button on:click={onClick}>Do Stuff!</button>
+</div>
+
 
 <style>
 .container{
     background-color:aquamarine;
     flex-grow: 1;
     z-index: 1;
+
+    display: flex;
+    flex-direction: column;
 }
 </style>

@@ -17,9 +17,9 @@
     let comp1: IWorkspaceComponentModel = {
         name: "A1",
         componentType: TestComponentA, 
-        properties: {txt: "HELLO", num: 12}, 
+        properties: {txt: "HELLO", num: 11}, 
         events: [],
-        initialLocation: WorkspaceLocation.BOTTOMBAR
+        initialLocation: WorkspaceLocation.LEFTBAR
     };
     
     let comp2: IWorkspaceComponentModel = {
@@ -38,7 +38,15 @@
         initialLocation: WorkspaceLocation.BOTTOMBAR
     };
 
-    myComponents = [...myComponents, comp1, comp2, comp3];
+    let comp4: IWorkspaceComponentModel = {
+        name: "B2",
+        componentType: TestComponentB, 
+        properties: {id: "b1", txt: "HELLO"}, 
+        events: [{name: "click-b", callback: onClickB}], 
+        initialLocation: WorkspaceLocation.LEFTBAR
+    };
+
+    myComponents = [...myComponents, comp1, comp2, comp3, comp4];
 
     onMount(() => {
         myComponents.forEach(c => {
