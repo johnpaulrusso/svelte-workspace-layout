@@ -90,6 +90,12 @@ export abstract class SidebarController
         if(tabName)
         {
             this.model.selectedTabName = tabName
+            if(this.model.isMinimized)
+            {
+                this.model.size = DEFAULT_SIZE_PX;
+                this.model.isMinimized = false;
+                this.resizeCustom();
+            }
         }
     }
 
