@@ -1,68 +1,32 @@
 <script lang="ts">
     import WorkspaceGrid from '$lib/WorkspaceGrid.svelte'
-    import TestComponentA from '$lib/test/TestComponentA.svelte';
-    import TestComponentB from '$lib/test/TestComponentB.svelte';
-	import { WorkspaceLocation} from '$lib/models/WorkspaceComponentModel';
-    import type { IWorkspaceComponentModel} from '$lib/models/WorkspaceComponentModel';
-    import {onMount} from "svelte";
+	import ContentWrapper from '$lib/components/ContentWrapper.svelte';
 
-    const onClickB = (event: Event) =>
-    {
-        myComponents[0].properties.txt = "WORLD";
-        myComponents = myComponents;
-    }
-
-    let myComponents: Array<IWorkspaceComponentModel> = [];
-
-    let comp1: IWorkspaceComponentModel = {
-        name: "A1",
-        componentType: TestComponentA, 
-        properties: {txt: "HELLO", num: 11}, 
-        events: [],
-        initialLocation: WorkspaceLocation.LEFTBAR
-    };
-    
-    let comp2: IWorkspaceComponentModel = {
-        name: "B1",
-        componentType: TestComponentB, 
-        properties: {id: "b1", txt: "HELLO"}, 
-        events: [{name: "click-b", callback: onClickB}], 
-        initialLocation: WorkspaceLocation.BOTTOMBAR
-    };
-
-    let comp3: IWorkspaceComponentModel = {
-        name: "A2",
-        componentType: TestComponentA, 
-        properties: {txt: "HELLO", num: 12}, 
-        events: [], 
-        initialLocation: WorkspaceLocation.BOTTOMBAR
-    };
-
-    let comp4: IWorkspaceComponentModel = {
-        name: "B2",
-        componentType: TestComponentB, 
-        properties: {id: "b1", txt: "HELLO"}, 
-        events: [{name: "click-b", callback: onClickB}], 
-        initialLocation: WorkspaceLocation.LEFTBAR
-    };
-
-    myComponents = [...myComponents, comp1, comp2, comp3, comp4];
-
-    onMount(() => {
-        myComponents.forEach(c => {
-            c.events.forEach(e => {
-                document.addEventListener(e.name, e.callback);
-            })
-        })
-    })
 </script>
 
 <div class="container">
-<WorkspaceGrid components={myComponents}>
-    <div slot="main-content" class="my-main-content">
-        CONTENT
-    </div>
-</WorkspaceGrid>
+<ContentWrapper parentId="main-content-container" name="Content 1">
+    <div class="test c1" slot="content">CONTENT 1</div>
+</ContentWrapper>
+<ContentWrapper parentId="leftsidebar" name="Content 2">
+    <div class="test c2" slot="content">CONTENT 2</div>
+</ContentWrapper>
+<ContentWrapper parentId="leftsidebar" name="Content 3">
+    <div class="test c3" slot="content">CONTENT 3</div>
+</ContentWrapper>
+<ContentWrapper parentId="bottomsidebar" name="Content 4">
+    <div class="test c4" slot="content">CONTENT 4</div>
+</ContentWrapper>
+<ContentWrapper parentId="bottomsidebar" name="Content 5">
+    <div class="test c5" slot="content">CONTENT 5</div>
+</ContentWrapper>
+
+<!--TODO: provide workspace grid info on styling!-->
+<!--TAB BUTTON STYLES-->
+<!--BORDER STYLES-->
+<!--FONTS-->
+<!--COLORS-->
+<WorkspaceGrid/>
 </div>
 
 <style>
@@ -74,12 +38,23 @@
         width: 100%;
     }
 
-    .my-main-content{
-        text-align: center;
-        background-color: lightgoldenrodyellow;
-
-        /**Flex grow must be set if you want the content to fill up empty space.*/
-        flex-grow: 1;
+    .test{
+        width: 100%;
+        height: 100%;
     }
-
+    .c1{
+        background-color:aquamarine;
+    }
+    .c2{
+        background-color: lavender;
+    }
+    .c3{
+        background-color: lightcyan;
+    }
+    .c4{
+        background-color: lightgoldenrodyellow;
+    }
+    .c5{
+        background-color:lightpink;
+    }
 </style>
