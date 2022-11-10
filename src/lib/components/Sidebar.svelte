@@ -9,6 +9,9 @@
 
     export let model: ISidebarModel;
 
+    export let controlBar_backgroundColor: string = "";
+    export let controlBarButton_color: string = "";
+
     $: vertical = (model.orientation === SidebarOrientation.VERTICAL) ? "vertical" : "";
     $: size = (model.orientation === SidebarOrientation.VERTICAL) ? "width: " + MIN_SIDEBAR_SIZE_PX + "px;" : "height: " + MIN_SIDEBAR_SIZE_PX + "px;";
     $: controlButtonSymbolName = (model.orientation === SidebarOrientation.VERTICAL) ? 
@@ -25,9 +28,9 @@
 <!-- Dependent on Google material symbols -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 <div class="container tabbable-content-container {vertical}" id={model.name} style="height: {model.height}; width: {model.width}; grid-area: {model.gridarea}; {model.border}">
-    <div class="control-bar {vertical}" style="{size}">
+    <div class="control-bar {vertical}" style="{size} background-color: {controlBar_backgroundColor}">
         <div class={CLASS_TAB_BUTTON_CONTAINER}></div>
-        <span class="material-symbols-outlined control-button" on:click={onClickOpenClose} on:keydown={()=>{}}>{controlButtonSymbolName}</span>
+        <span class="material-symbols-outlined control-button" style="color: {controlBarButton_color};" on:click={onClickOpenClose} on:keydown={()=>{}}>{controlButtonSymbolName}</span>
     </div>
     <div class={CLASS_ACTIVE_TAB}></div>
     <div class={CLASS_STAGED_TABS}></div>
@@ -39,8 +42,6 @@
 
         display: flex; 
         flex-direction: column;
-
-        border: solid 1px; 
     }
     .container.vertical{
         flex-direction: row-reverse;
@@ -55,7 +56,6 @@
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
-        border: solid 1px red;
     }
     .control-bar.vertical{
         writing-mode: sideways-lr;
@@ -65,7 +65,6 @@
     .active-tab{
         width: 100%;
         height: 100%;
-        border: solid 1px green;
         display: flex;
         flex-direction: column;
         overflow: hidden;
@@ -74,14 +73,14 @@
     .material-symbols-outlined {
       font-variation-settings:
       'FILL' 0,
-      'wght' 200,
+      'wght' 250,
       'GRAD' 0,
       'opsz' 20;
     }
-
+/*
     .material-symbols-outlined.control-button:hover{
         background-color:rgb(240, 240, 240);
-    }
+    }*/
 
     .staged-tabs{
         display: none;

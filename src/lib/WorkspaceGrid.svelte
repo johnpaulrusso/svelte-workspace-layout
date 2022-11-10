@@ -8,6 +8,10 @@
 
     /* public properties */
     export let borderWidth_px: number = 1;
+    export let controlBar_backgroundColor: string = "";
+    export let controlBarButton_color: string = "";
+    export let tabButtonStyle = "";
+    export let tabButtonStyleHover = "";
    // export let borderColor: string = "lightgray";
 
     /* private properties */
@@ -28,8 +32,10 @@
 
     let tabbedContentManager: tabMgr.TabbedContentManager | null = null; 
 
+
+
     onMount(() => {
-        tabbedContentManager = new tabMgr.TabbedContentManager(["leftsidebar", "bottomsidebar"], "", "", onTabClicked);
+        tabbedContentManager = new tabMgr.TabbedContentManager(["leftsidebar", "bottomsidebar"], tabButtonStyle, tabButtonStyleHover, onTabClicked);
         tabbedContentManager.placeItemsInInitialLocations();
     })
 
@@ -175,10 +181,14 @@
         <slot name="main-content">Error: Missing Main Content Slot!</slot>
     </div>
     <Sidebar model={leftSideBar.model}
+             controlBar_backgroundColor={controlBar_backgroundColor}
+             controlBarButton_color={controlBarButton_color}
              on:open_close_event={onOpenCloseLeftbar}
              on:tab_change_event={onChangeTabLeftbar}>
     </Sidebar>
     <Sidebar model={bottomSideBar.model}
+            controlBar_backgroundColor={controlBar_backgroundColor}
+            controlBarButton_color={controlBarButton_color}
             on:open_close_event={onOpenCloseBottombar}
             on:tab_change_event={onChangeTabBottombar}>
     </Sidebar>
@@ -202,6 +212,8 @@
 
         display: flex;
         flex-direction: column;
+       
+       
     }
     .noselect {
         -webkit-touch-callout: none; /* iOS Safari */
