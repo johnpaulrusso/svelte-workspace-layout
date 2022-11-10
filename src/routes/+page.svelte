@@ -5,9 +5,11 @@
 </script>
 
 <div class="container">
+    <!--
 <ContentWrapper parentId="main-content-container" name="Content 1">
     <div class="test c1" slot="content">CONTENT 1</div>
-</ContentWrapper>
+</ContentWrapper>-->
+
 <ContentWrapper parentId="leftsidebar" name="Content 2">
     <div class="test c2" slot="content">CONTENT 2</div>
 </ContentWrapper>
@@ -26,7 +28,9 @@
 <!--BORDER STYLES-->
 <!--FONTS-->
 <!--COLORS-->
-<WorkspaceGrid/>
+<WorkspaceGrid>
+    <div class="test c1" slot="main-content">CONTENT 1</div>
+</WorkspaceGrid>
 </div>
 
 <style>

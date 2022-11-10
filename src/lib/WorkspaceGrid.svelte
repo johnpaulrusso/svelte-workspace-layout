@@ -29,9 +29,29 @@
     let tabbedContentManager: tabMgr.TabbedContentManager | null = null; 
 
     onMount(() => {
-        tabbedContentManager = new tabMgr.TabbedContentManager(["main-content-container", "leftsidebar", "bottomsidebar"]);
+        tabbedContentManager = new tabMgr.TabbedContentManager(["leftsidebar", "bottomsidebar"], "", "", onTabClicked);
         tabbedContentManager.placeItemsInInitialLocations();
     })
+
+    const onTabClicked = (tabContainerName: string) =>
+    {
+        if(tabContainerName == "leftsidebar")
+        {
+            if(leftSideBar.model.isMinimized)
+            {
+                leftSideBar.toggleOpenClose();
+            }
+            leftSideBar = leftSideBar;
+        }
+        if(tabContainerName == "bottomsidebar")
+        {
+            if(bottomSideBar.model.isMinimized)
+            {
+                bottomSideBar.toggleOpenClose();
+            }
+            bottomSideBar = bottomSideBar;
+        }
+    }
 
     /**
      * This component must always monitor mouse movement to handle 
@@ -146,10 +166,13 @@
 
 
 <div class="container noselect" id="workspace_layout" on:mousemove={onMouseMove} on:mousedown={onMouseDown} on:mouseup={onMouseUp} on:mouseleave={onMouseUp}>
-    <div class={tabMgr.CLASS_TABBABLE_CONTENT_CONTAINER} id="main-content-container">
+  <!-- <div class={tabMgr.CLASS_TABBABLE_CONTENT_CONTAINER} id="main-content-container">
         <div class={tabMgr.CLASS_TAB_BUTTON_CONTAINER}></div>
         <div class={tabMgr.CLASS_ACTIVE_TAB}></div>
         <div class={tabMgr.CLASS_STAGED_TABS}></div>
+    </div>--> 
+    <div class="main-content">
+        <slot name="main-content">Error: Missing Main Content Slot!</slot>
     </div>
     <Sidebar model={leftSideBar.model}
              on:open_close_event={onOpenCloseLeftbar}
@@ -174,7 +197,7 @@
             "leftbar content"
             "leftbar bottombar";
     }
-    .content{
+    .main-content{
         grid-area: content;
 
         display: flex;

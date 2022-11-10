@@ -73,15 +73,25 @@ export abstract class SidebarController
     {
         if(this.model.isMinimized)
         {
-            this.model.size = DEFAULT_SIZE_PX;
-            this.model.isMinimized = false;
+            this.open();
         }
         else
         {
-            this.model.size = MIN_SIDEBAR_SIZE_PX;
-            this.model.isMinimized = true;
+            this.close();
         }
+    }
 
+    open()
+    {
+        this.model.size = DEFAULT_SIZE_PX;
+        this.model.isMinimized = false;
+        this.resizeCustom();
+    }
+
+    close()
+    {
+        this.model.size = MIN_SIDEBAR_SIZE_PX;
+        this.model.isMinimized = true;
         this.resizeCustom();
     }
 

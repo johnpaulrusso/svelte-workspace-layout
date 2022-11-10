@@ -26,8 +26,9 @@ export class TabbedContentManager{
     tabbedContentContainerIds: string[] = [];
     buttonStyle: string = "";
     buttonHoverStyle: string = "";
+    tabClickedCallback: ((tabContainerName: string) => void) | null = null;
     
-    constructor(tabbedContentContainerIds: string[], buttonStyle?: string, buttonHoverStyle?: string)
+    constructor(tabbedContentContainerIds: string[], buttonStyle?: string, buttonHoverStyle?: string, tabClickedCallback?: (tabContainerName: string) => void)
     {
         this.tabbedContentContainerIds = tabbedContentContainerIds;
         if(buttonStyle)
@@ -38,17 +39,21 @@ export class TabbedContentManager{
         {
             this.buttonHoverStyle = buttonHoverStyle;
         }
+        if(tabClickedCallback)
+        {
+            this.tabClickedCallback = tabClickedCallback;
+        }
     }
 
     /**
-     * placeItemsInInitialLocations - Places all slotted content wrappers into
+     * placeItemsInInitialLocations - Places all content wrappers into
      * initial elements based on thier corresponding parent Id.
      * @param parentIds a list of the string parentIds of elements 
-     * valid for slotted content wrapper placement.
+     * valid for content wrapper placement.
      */
     placeItemsInInitialLocations()
     {
-        //For each SlottedContentWrapper, place in the commanded TabbedFlexItem's staging element.
+        //For each ContentWrapper, place in the commanded TabbedFlexItem's staging element.
         let allWrappedContent = document.getElementsByClassName(CLASS_TABBABLE_CONTENT) as HTMLCollectionOf<HTMLElement>;
         Array.from(allWrappedContent).forEach(wc => {
             let tabbedContentContainerId = this.tabbedContentContainerIds.find(pid => pid === wc.dataset.parentid);
@@ -66,7 +71,7 @@ export class TabbedContentManager{
     onTabClicked(event: Event)
     {
         let target = event.target as HTMLElement;
-        let parentTabbedFlexItem = target.closest("." + CLASS_TABBABLE_CONTENT_CONTAINER);
+        let parentTabbedFlexItem = target.closest("." + CLASS_TABBABLE_CONTENT_CONTAINER) as HTMLElement;
 
         if(parentTabbedFlexItem)
         {
@@ -94,9 +99,7 @@ export class TabbedContentManager{
                 }
             }
 
-            if(isAlreadyActive){ return; }
-
-            if(stagingItem && activeItem)
+            if(!isAlreadyActive && stagingItem && activeItem)
             {
                 let childWrappersStaging = stagingItem.getElementsByClassName(CLASS_TABBABLE_CONTENT) as HTMLCollectionOf<HTMLElement>;
                 Array.from(childWrappersStaging).forEach(cws => {
@@ -108,6 +111,12 @@ export class TabbedContentManager{
                     }
                 })
             }
+
+            //Finally, emit the callback so the client knows the tab was clicked/changed.
+            if(this.tabClickedCallback && parentTabbedFlexItem.id)
+            {
+                this.tabClickedCallback(parentTabbedFlexItem.id);
+            } 
         }
     }
 
@@ -154,7 +163,11 @@ export class TabbedContentManager{
                     }
                      
                     tabButton.innerHTML = cw.dataset.name ? cw.dataset.name : "";
-                    tabButton.onclick = this.onTabClicked;
+                    
+                    let self: TabbedContentManager = this;
+                    tabButton.onclick = (event: Event) => {
+                        self.onTabClicked(event);
+                    }
                     buttonContainer?.appendChild(tabButton);
                 }
             })
