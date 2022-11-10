@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { IWorkspaceComponentModel } from "$lib/models/WorkspaceComponentModel";
     import {createEventDispatcher} from "svelte";
     import {MIN_SIDEBAR_SIZE_PX} from "../controllers/SidebarController";
     import type {ISidebarModel} from "../models/SidebarModel"
@@ -12,25 +11,15 @@
 
     $: vertical = (model.orientation === SidebarOrientation.VERTICAL) ? "vertical" : "";
     $: size = (model.orientation === SidebarOrientation.VERTICAL) ? "width: " + MIN_SIDEBAR_SIZE_PX + "px;" : "height: " + MIN_SIDEBAR_SIZE_PX + "px;";
-    $: controlButtonSymbolName = model.isMinimized ? "expand_less" : "expand_more";
-
-    //selectedComponentIndex must be > 0.
+    $: controlButtonSymbolName = (model.orientation === SidebarOrientation.VERTICAL) ? 
+        (model.isMinimized ? "expand_more" : "expand_less") :
+        (model.isMinimized ? "expand_less" : "expand_more");
 
     function onClickOpenClose()
     {
         dispatch("open_close_event");
     }
 
-    /*
-    function onClickTab(event: MouseEvent)
-    {
-        let element = event.target as HTMLElement
-        if(element)
-        {
-            dispatch("tab_change_event", element.getAttribute("name"));
-        }
-    }*/
-    
 </script>
 
 <!-- Dependent on Google material symbols -->
