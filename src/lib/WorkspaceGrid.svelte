@@ -4,12 +4,15 @@
     import { LeftbarController } from "./controllers/LeftbarController";
     import { BottombarController } from "./controllers/BottombarController";
 	import { WorkspaceLocation, type IWorkspaceComponentModel } from "./models/WorkspaceComponentModel";
+    import * as tabMgr from "./TabbedContentManager"
 
     /* public properties */
     export let borderWidth_px: number = 1;
+    export let controlBar_backgroundColor: string = "";
+    export let controlBarButton_color: string = "";
+    export let tabButtonStyle = "";
+    export let tabButtonStyleHover = "";
    // export let borderColor: string = "lightgray";
-
-    export let components: Array<IWorkspaceComponentModel> = [];
 
     /* private properties */
     /*
@@ -27,17 +30,33 @@
     let leftSideBar: LeftbarController = new LeftbarController("leftsidebar", 200);
     let bottomSideBar: BottombarController = new BottombarController("bottomsidebar", 200);
 
-    $: leftSidebarComponents = components.filter(comp => comp.initialLocation === WorkspaceLocation.LEFTBAR);
-    $: bottomSidebarComponents = components.filter(comp => comp.initialLocation === WorkspaceLocation.BOTTOMBAR);
-    $: if(leftSidebarComponents.length > 0){
-        leftSideBar.model.isDisplayed = true;
-    }else{
-        leftSideBar.model.isDisplayed = false;
-    }
-    $: if(bottomSidebarComponents.length > 0){
-        bottomSideBar.model.isDisplayed = true;
-    }else{
-        bottomSideBar.model.isDisplayed = false;
+    let tabbedContentManager: tabMgr.TabbedContentManager | null = null; 
+
+
+
+    onMount(() => {
+        tabbedContentManager = new tabMgr.TabbedContentManager(["leftsidebar", "bottomsidebar"], tabButtonStyle, tabButtonStyleHover, onTabClicked);
+        tabbedContentManager.placeItemsInInitialLocations();
+    })
+
+    const onTabClicked = (tabContainerName: string) =>
+    {
+        if(tabContainerName == "leftsidebar")
+        {
+            if(leftSideBar.model.isMinimized)
+            {
+                leftSideBar.toggleOpenClose();
+            }
+            leftSideBar = leftSideBar;
+        }
+        if(tabContainerName == "bottomsidebar")
+        {
+            if(bottomSideBar.model.isMinimized)
+            {
+                bottomSideBar.toggleOpenClose();
+            }
+            bottomSideBar = bottomSideBar;
+        }
     }
 
     /**
@@ -153,16 +172,23 @@
 
 
 <div class="container noselect" id="workspace_layout" on:mousemove={onMouseMove} on:mousedown={onMouseDown} on:mouseup={onMouseUp} on:mouseleave={onMouseUp}>
-    <div class="content">
-        <slot name="main-content"><em>no content was provided to this slot.</em></slot>
+  <!-- <div class={tabMgr.CLASS_TABBABLE_CONTENT_CONTAINER} id="main-content-container">
+        <div class={tabMgr.CLASS_TAB_BUTTON_CONTAINER}></div>
+        <div class={tabMgr.CLASS_ACTIVE_TAB}></div>
+        <div class={tabMgr.CLASS_STAGED_TABS}></div>
+    </div>--> 
+    <div class="main-content">
+        <slot name="main-content">Error: Missing Main Content Slot!</slot>
     </div>
     <Sidebar model={leftSideBar.model}
-             components={leftSidebarComponents}
+             controlBar_backgroundColor={controlBar_backgroundColor}
+             controlBarButton_color={controlBarButton_color}
              on:open_close_event={onOpenCloseLeftbar}
              on:tab_change_event={onChangeTabLeftbar}>
     </Sidebar>
     <Sidebar model={bottomSideBar.model}
-            components={bottomSidebarComponents}
+            controlBar_backgroundColor={controlBar_backgroundColor}
+            controlBarButton_color={controlBarButton_color}
             on:open_close_event={onOpenCloseBottombar}
             on:tab_change_event={onChangeTabBottombar}>
     </Sidebar>
@@ -181,11 +207,13 @@
             "leftbar content"
             "leftbar bottombar";
     }
-    .content{
+    .main-content{
         grid-area: content;
 
         display: flex;
         flex-direction: column;
+       
+       
     }
     .noselect {
         -webkit-touch-callout: none; /* iOS Safari */

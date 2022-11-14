@@ -2,7 +2,8 @@ import type { ComponentEvents, ComponentProps, ComponentType, SvelteComponent } 
 
 export enum WorkspaceLocation 
 {
-    MAIN = 0,
+    NONE = 0,
+    MAIN,
     LEFTBAR,
     BOTTOMBAR
 }
