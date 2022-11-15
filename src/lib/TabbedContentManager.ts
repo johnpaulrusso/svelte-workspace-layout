@@ -3,6 +3,8 @@
  * 
  *  slotted-wrapper-content could be any target, let the client decide!
  */
+ import type { ISidebarModel } from "./models/SidebarModel";
+
 export const CLASS_TABBABLE_CONTENT: string = "tabbable-content";
 export const CLASS_TABBABLE_CONTENT_CONTAINER: string = "tabbable-content-container";
 
@@ -23,14 +25,15 @@ function getSingletonElementByClassFrom(parentElement: HTMLElement, className: s
 
 
 export class TabbedContentManager{
-    tabbedContentContainerIds: string[] = [];
+    tabbedContentContainerModels: ISidebarModel[] = [];
     buttonStyle: string = "";
     buttonHoverStyle: string = "";
     tabClickedCallback: ((tabContainerName: string) => void) | null = null;
+    onChangeCallback:  ((tabContainerName: string) => void) | null = null;
     
-    constructor(tabbedContentContainerIds: string[], buttonStyle?: string, buttonHoverStyle?: string, tabClickedCallback?: (tabContainerName: string) => void)
+    constructor(tabbedContentContainerModels: ISidebarModel[], buttonStyle?: string, buttonHoverStyle?: string, tabClickedCallback?: (tabContainerName: string) => void, onChangeCallback?: (tabContainerName: string) => void)
     {
-        this.tabbedContentContainerIds = tabbedContentContainerIds;
+        this.tabbedContentContainerModels = tabbedContentContainerModels;
         if(buttonStyle)
         {
             this.buttonStyle = buttonStyle;
@@ -42,6 +45,10 @@ export class TabbedContentManager{
         if(tabClickedCallback)
         {
             this.tabClickedCallback = tabClickedCallback;
+        }
+        if(onChangeCallback)
+        {
+            this.onChangeCallback = onChangeCallback;
         }
     }
 
@@ -56,8 +63,17 @@ export class TabbedContentManager{
         //For each ContentWrapper, place in the commanded TabbedFlexItem's staging element.
         let allWrappedContent = document.getElementsByClassName(CLASS_TABBABLE_CONTENT) as HTMLCollectionOf<HTMLElement>;
         Array.from(allWrappedContent).forEach(wc => {
-            let tabbedContentContainerId = this.tabbedContentContainerIds.find(pid => pid === wc.dataset.parentid);
-            this.#placeInStagingElementOfParentId(tabbedContentContainerId, wc);
+            let tabbedContentContainerModel = this.tabbedContentContainerModels.find(m => m.name === wc.dataset.parentid);
+            if(tabbedContentContainerModel)
+            {
+                this.#placeInStagingElementOfParentId(tabbedContentContainerModel.name, wc);
+
+                if(!tabbedContentContainerModel.isDisplayed && this.onChangeCallback)
+                {
+                    tabbedContentContainerModel.isDisplayed = true;
+                    this.onChangeCallback(tabbedContentContainerModel.name);
+                }
+            }
         });
 
         //For each tab container, make the first staged-tab the active tab.

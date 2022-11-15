@@ -12,6 +12,7 @@
     export let controlBar_backgroundColor: string = "";
     export let controlBarButton_color: string = "";
 
+    $: display = model.isDisplayed ? "flex" : "none";
     $: vertical = (model.orientation === SidebarOrientation.VERTICAL) ? "vertical" : "";
     $: size = (model.orientation === SidebarOrientation.VERTICAL) ? "width: " + MIN_SIDEBAR_SIZE_PX + "px;" : "height: " + MIN_SIDEBAR_SIZE_PX + "px;";
     $: controlButtonSymbolName = (model.orientation === SidebarOrientation.VERTICAL) ? 
@@ -27,7 +28,7 @@
 
 <!-- Dependent on Google material symbols -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-<div class="container tabbable-content-container {vertical}" id={model.name} style="height: {model.height}; width: {model.width}; grid-area: {model.gridarea}; {model.border}">
+<div class="container tabbable-content-container {vertical}" id={model.name} style="display: {display}; height: {model.height}; width: {model.width}; grid-area: {model.gridarea}; {model.border}">
     <div class="control-bar {vertical}" style="{size} background-color: {controlBar_backgroundColor}">
         <div class={CLASS_TAB_BUTTON_CONTAINER}></div>
         <span class="material-symbols-outlined control-button" style="color: {controlBarButton_color};" on:click={onClickOpenClose} on:keydown={()=>{}}>{controlButtonSymbolName}</span>
@@ -37,11 +38,9 @@
 </div>
 <style>
     .container{
+        flex-direction: column;
         grid-area: sidebar;
         overflow: hidden;
-
-        display: flex; 
-        flex-direction: column;
     }
     .container.vertical{
         flex-direction: row-reverse;

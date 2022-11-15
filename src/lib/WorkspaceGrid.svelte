@@ -3,7 +3,6 @@
     import Sidebar from "./components/Sidebar.svelte";
     import { LeftbarController } from "./controllers/LeftbarController";
     import { BottombarController } from "./controllers/BottombarController";
-	import { WorkspaceLocation, type IWorkspaceComponentModel } from "./models/WorkspaceComponentModel";
     import * as tabMgr from "./TabbedContentManager"
 
     /* public properties */
@@ -12,16 +11,6 @@
     export let controlBarButton_color: string = "";
     export let tabButtonStyle = "";
     export let tabButtonStyleHover = "";
-   // export let borderColor: string = "lightgray";
-
-    /* private properties */
-    /*
-    let LEFTBAR_BORDER_STYLE: string = "border-style: none solid none none; border-color: " + 
-                                        borderColor + "; border-width: " + 
-                                        borderWidth_px + "px;";
-    let BOTTOMBAR_BORDER_STYLE: string = "border-style: solid none none none; border-color: " +                                       
-                                        borderColor + "; border-width: " + 
-                                        borderWidth_px + "px;";*/
 
     let mouseX: number = 0;
     let mouseY: number = 0;
@@ -32,10 +21,8 @@
 
     let tabbedContentManager: tabMgr.TabbedContentManager | null = null; 
 
-
-
     onMount(() => {
-        tabbedContentManager = new tabMgr.TabbedContentManager(["leftsidebar", "bottomsidebar"], tabButtonStyle, tabButtonStyleHover, onTabClicked);
+        tabbedContentManager = new tabMgr.TabbedContentManager([leftSideBar.model, bottomSideBar.model], tabButtonStyle, tabButtonStyleHover, onTabClicked, onTabManagerChange);
         tabbedContentManager.placeItemsInInitialLocations();
     })
 
@@ -55,6 +42,18 @@
             {
                 bottomSideBar.toggleOpenClose();
             }
+            bottomSideBar = bottomSideBar;
+        }
+    }
+
+    const onTabManagerChange = (tabContainerName: string) => 
+    {
+        if(tabContainerName == "leftsidebar")
+        {
+            leftSideBar = leftSideBar;
+        }
+        if(tabContainerName == "bottomsidebar")
+        {
             bottomSideBar = bottomSideBar;
         }
     }

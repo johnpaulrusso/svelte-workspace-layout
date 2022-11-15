@@ -17,12 +17,13 @@
 <ContentWrapper parentId="leftsidebar" name="CONTENT 3">
     <div class="test c3" slot="content">CONTENT 3</div>
 </ContentWrapper>
+<!--
 <ContentWrapper parentId="bottomsidebar" name="CONTENT 4">
     <div class="test c4" slot="content">CONTENT 4</div>
 </ContentWrapper>
 <ContentWrapper parentId="bottomsidebar" name="CONTENT 5">
     <div class="test c5" slot="content">CONTENT 5</div>
-</ContentWrapper>
+</ContentWrapper>-->
 
 <!--TODO: provide workspace grid info on styling!-->
 <!--TAB BUTTON STYLES-->
@@ -30,7 +31,13 @@
 <!--FONTS-->
 <!--COLORS-->
 <WorkspaceGrid controlBar_backgroundColor="darkslategray" controlBarButton_color="ghostwhite" tabButtonStyle={tabButtonStyle} tabButtonStyleHover={tabButtonStyleHover}>
-    <div class="test c1" slot="main-content">CONTENT 1</div>
+    <div class="test c1" slot="main-content">
+        <div>CONTENT 1.1</div>
+        <div>CONTENT 1.2</div>
+        <div>CONTENT 1.3</div>
+        <div>CONTENT 1.4</div>
+        <div>CONTENT 1.5</div>
+    </div>
 </WorkspaceGrid>
 </div>
 
