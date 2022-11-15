@@ -3,7 +3,6 @@
     import Sidebar from "./components/Sidebar.svelte";
     import { LeftbarController } from "./controllers/LeftbarController";
     import { BottombarController } from "./controllers/BottombarController";
-	import { WorkspaceLocation, type IWorkspaceComponentModel } from "./models/WorkspaceComponentModel";
     import * as tabMgr from "./TabbedContentManager"
 
     /* public properties */
