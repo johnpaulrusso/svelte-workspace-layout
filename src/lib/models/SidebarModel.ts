@@ -1,5 +1,3 @@
-import type { IWorkspaceComponentModel } from "./WorkspaceComponentModel";
-
 export enum SidebarOrientation 
 {
     VERTICAL = 0,
