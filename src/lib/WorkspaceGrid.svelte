@@ -21,9 +21,16 @@
 
     let tabbedContentManager: tabMgr.TabbedContentManager | null = null; 
 
+    let contentHeight = 0;
+    let useContentHeight = false;
+    
+    $: contentHeightToUse = useContentHeight ? (contentHeight + "px") : "auto";
+
     onMount(() => {
         tabbedContentManager = new tabMgr.TabbedContentManager([leftSideBar.model, bottomSideBar.model], tabButtonStyle, tabButtonStyleHover, onTabClicked, onTabManagerChange);
         tabbedContentManager.placeItemsInInitialLocations();
+
+        contentHeight = window.innerHeight - 200;
     })
 
     const onTabClicked = (tabContainerName: string) =>
@@ -83,7 +90,11 @@
 
         //We need to calculate an offset here incase the layout is nested in another UI element.
         let offsetY = window.innerHeight - containerElement.getBoundingClientRect().bottom;
-        bottomSideBar.resize(containerElement.getBoundingClientRect().height - mouseY + offsetY);
+        if(bottomSideBar.resize(containerElement.getBoundingClientRect().height - mouseY + offsetY))
+        {
+            useContentHeight = true;
+            contentHeight = containerElement.getBoundingClientRect().height - bottomSideBar.model.size;
+        }
 
         //This is needed to trigger Svelte reactivity.
         leftSideBar = leftSideBar;
@@ -176,12 +187,7 @@
 
 
 <div class="container noselect" id="workspace_layout" on:mousemove={onMouseMove} on:mousedown={onMouseDown} on:mouseup={onMouseUp} on:mouseleave={onMouseUp}>
-  <!-- <div class={tabMgr.CLASS_TABBABLE_CONTENT_CONTAINER} id="main-content-container">
-        <div class={tabMgr.CLASS_TAB_BUTTON_CONTAINER}></div>
-        <div class={tabMgr.CLASS_ACTIVE_TAB}></div>
-        <div class={tabMgr.CLASS_STAGED_TABS}></div>
-    </div>--> 
-    <div class="main-content">
+    <div class="main-content" style="height: {contentHeightToUse}">
         <slot name="main-content">Error: Missing Main Content Slot!</slot>
     </div>
     <Sidebar model={leftSideBar.model}
@@ -217,11 +223,9 @@
     }
     .main-content{
         grid-area: content;
-
+       
         display: flex;
         flex-direction: column;
-       
-       
     }
     .noselect {
         -webkit-touch-callout: none; /* iOS Safari */

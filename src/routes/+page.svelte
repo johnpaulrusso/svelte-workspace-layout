@@ -5,14 +5,6 @@
     export let tabButtonStyleHover = "border: none; background-color: transparent; color: white;";
 </script>
 
-<div class="container">
-    <!--
-<ContentWrapper parentId="main-content-container" name="Content 1">
-    <div class="test c1" slot="content">CONTENT 1</div>
-</ContentWrapper>-->
-
-<div class="header">HEADER</div>
-
 <ContentWrapper parentId="leftsidebar" name="CONTENT 2">
     <div class="test c2" slot="content">CONTENT 2</div>
 </ContentWrapper>
@@ -27,13 +19,47 @@
     <div class="test c5" slot="content">CONTENT 5</div>
 </ContentWrapper>
 
+<div class="container">
+    <!--
+<ContentWrapper parentId="main-content-container" name="Content 1">
+    <div class="test c1" slot="content">CONTENT 1</div>
+</ContentWrapper>-->
+
+<div class="header">HEADER</div>
+
 <!--TODO: provide workspace grid info on styling!-->
 <!--TAB BUTTON STYLES-->
 <!--BORDER STYLES-->
 <!--FONTS-->
 <!--COLORS-->
+
 <WorkspaceGrid controlBar_backgroundColor="darkslategray" controlBarButton_color="ghostwhite" tabButtonStyle={tabButtonStyle} tabButtonStyleHover={tabButtonStyleHover}>
     <div class="test c1" slot="main-content">
+        <div>CONTENT 1.1</div>
+        <div>CONTENT 1.2</div>
+        <div>CONTENT 1.3</div>
+        <div>CONTENT 1.4</div>
+        <div>CONTENT 1.5</div>
+        <div>CONTENT 1.1</div>
+        <div>CONTENT 1.2</div>
+        <div>CONTENT 1.3</div>
+        <div>CONTENT 1.4</div>
+        <div>CONTENT 1.5</div>
+        <div>CONTENT 1.1</div>
+        <div>CONTENT 1.2</div>
+        <div>CONTENT 1.3</div>
+        <div>CONTENT 1.4</div>
+        <div>CONTENT 1.5</div>
+        <div>CONTENT 1.1</div>
+        <div>CONTENT 1.2</div>
+        <div>CONTENT 1.3</div>
+        <div>CONTENT 1.4</div>
+        <div>CONTENT 1.5</div>
+        <div>CONTENT 1.1</div>
+        <div>CONTENT 1.2</div>
+        <div>CONTENT 1.3</div>
+        <div>CONTENT 1.4</div>
+        <div>CONTENT 1.5</div>
         <div>CONTENT 1.1</div>
         <div>CONTENT 1.2</div>
         <div>CONTENT 1.3</div>
@@ -42,7 +68,7 @@
     </div>
 </WorkspaceGrid>
 
-<div class="header">FOOTER</div>
+<div class="footer">FOOTER</div>
 </div>
 
 <style>
@@ -61,6 +87,12 @@
         width: 100%;
         height: 100%;
         background-color:slategray;
+    }
+    .header{
+        flex-shrink: 0;
+    }
+    .footer{
+        flex-shrink: 0;
     }
     /*
     .c1{
