@@ -198,6 +198,10 @@
         width: 100%;
         height: 100%;
 
+        /**Flex Item Settings*/
+        flex-shrink: 1;
+		flex-grow: 1;
+
         /** Grid Setup */
         display: grid;
         grid-template-columns: min-content minmax(0, 1fr);
