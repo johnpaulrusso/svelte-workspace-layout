@@ -11,19 +11,21 @@
     <div class="test c1" slot="content">CONTENT 1</div>
 </ContentWrapper>-->
 
+<div class="header">HEADER</div>
+
 <ContentWrapper parentId="leftsidebar" name="CONTENT 2">
     <div class="test c2" slot="content">CONTENT 2</div>
 </ContentWrapper>
 <ContentWrapper parentId="leftsidebar" name="CONTENT 3">
     <div class="test c3" slot="content">CONTENT 3</div>
 </ContentWrapper>
-<!--
+
 <ContentWrapper parentId="bottomsidebar" name="CONTENT 4">
     <div class="test c4" slot="content">CONTENT 4</div>
 </ContentWrapper>
 <ContentWrapper parentId="bottomsidebar" name="CONTENT 5">
     <div class="test c5" slot="content">CONTENT 5</div>
-</ContentWrapper>-->
+</ContentWrapper>
 
 <!--TODO: provide workspace grid info on styling!-->
 <!--TAB BUTTON STYLES-->
@@ -39,6 +41,8 @@
         <div>CONTENT 1.5</div>
     </div>
 </WorkspaceGrid>
+
+<div class="header">FOOTER</div>
 </div>
 
 <style>
@@ -48,6 +52,9 @@
         left: 0;
         bottom: 0;
         width: 100%;
+
+        display: flex;
+        flex-direction: column;
     }
 
     .test{

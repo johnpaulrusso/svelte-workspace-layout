@@ -77,8 +77,13 @@
 
         updateCursorStyle();
 
-        leftSideBar.resize(mouseX);
-        bottomSideBar.resize(containerElement.getBoundingClientRect().height - mouseY);
+        //We need to calculate an offset here incase the layout is nested in another UI element.
+        let offsetX = containerElement.getBoundingClientRect().left;
+        leftSideBar.resize(mouseX + offsetX);
+
+        //We need to calculate an offset here incase the layout is nested in another UI element.
+        let offsetY = window.innerHeight - containerElement.getBoundingClientRect().bottom;
+        bottomSideBar.resize(containerElement.getBoundingClientRect().height - mouseY + offsetY);
 
         //This is needed to trigger Svelte reactivity.
         leftSideBar = leftSideBar;
