@@ -25,7 +25,7 @@
     <div class="test c1" slot="content">CONTENT 1</div>
 </ContentWrapper>-->
 
-<div class="header">HEADER</div>
+<div class="header"><div>H1</div><div>H2</div></div>
 
 <!--TODO: provide workspace grid info on styling!-->
 <!--TAB BUTTON STYLES-->
@@ -68,7 +68,7 @@
     </div>
 </WorkspaceGrid>
 
-<div class="footer">FOOTER</div>
+<div class="footer"><div>F2</div></div>
 </div>
 
 <style>

@@ -29,8 +29,6 @@
     onMount(() => {
         tabbedContentManager = new tabMgr.TabbedContentManager([leftSideBar.model, bottomSideBar.model], tabButtonStyle, tabButtonStyleHover, onTabClicked, onTabManagerChange);
         tabbedContentManager.placeItemsInInitialLocations();
-
-        contentHeight = window.innerHeight - 200;
     })
 
     const onTabClicked = (tabContainerName: string) =>
@@ -89,8 +87,8 @@
         leftSideBar.resize(mouseX + offsetX);
 
         //We need to calculate an offset here incase the layout is nested in another UI element.
-        let offsetY = window.innerHeight - containerElement.getBoundingClientRect().bottom;
-        if(bottomSideBar.resize(containerElement.getBoundingClientRect().height - mouseY + offsetY))
+        let sby = containerElement.getBoundingClientRect().top + containerElement.getBoundingClientRect().height - mouseY;
+        if(bottomSideBar.resize(sby))
         {
             useContentHeight = true;
             contentHeight = containerElement.getBoundingClientRect().height - bottomSideBar.model.size;
