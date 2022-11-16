@@ -33,7 +33,7 @@
 <!--FONTS-->
 <!--COLORS-->
 
-<WorkspaceGrid controlBar_backgroundColor="darkslategray" controlBarButton_color="ghostwhite" tabButtonStyle={tabButtonStyle} tabButtonStyleHover={tabButtonStyleHover}>
+<WorkspaceGrid controlBar_backgroundColor="darkslategray" controlBarButton_color="ghostwhite" tabButtonStyle={tabButtonStyle} tabButtonStyleHover={tabButtonStyleHover} minimizeLeftbarOnStart={true}>
     <div class="test c1" slot="main-content">
         <div>CONTENT 1.1</div>
         <div>CONTENT 1.2</div>

@@ -1,6 +1,7 @@
 <script lang="ts">
     import {onMount} from "svelte";
     import Sidebar from "./components/Sidebar.svelte";
+    import { MIN_SIDEBAR_SIZE_PX } from "./controllers/SidebarController";
     import { LeftbarController } from "./controllers/LeftbarController";
     import { BottombarController } from "./controllers/BottombarController";
     import * as tabMgr from "./TabbedContentManager"
@@ -11,13 +12,15 @@
     export let controlBarButton_color: string = "";
     export let tabButtonStyle = "";
     export let tabButtonStyleHover = "";
+    export let minimizeLeftbarOnStart = false;
+    export let minimizeBottombarOnStart = false;
 
     let mouseX: number = 0;
     let mouseY: number = 0;
     let containerElement: HTMLElement | null;
 
-    let leftSideBar: LeftbarController = new LeftbarController("leftsidebar", 200);
-    let bottomSideBar: BottombarController = new BottombarController("bottomsidebar", 200);
+    let leftSideBar: LeftbarController = new LeftbarController("leftsidebar", minimizeLeftbarOnStart ? MIN_SIDEBAR_SIZE_PX : 200);
+    let bottomSideBar: BottombarController = new BottombarController("bottomsidebar", minimizeBottombarOnStart ? MIN_SIDEBAR_SIZE_PX : 200);
 
     let tabbedContentManager: tabMgr.TabbedContentManager | null = null; 
 
@@ -27,6 +30,8 @@
     $: contentHeightToUse = useContentHeight ? (contentHeight + "px") : "auto";
 
     onMount(() => {
+        leftSideBar.model.isMinimized = minimizeLeftbarOnStart;
+        bottomSideBar.model.isMinimized = minimizeBottombarOnStart;
         tabbedContentManager = new tabMgr.TabbedContentManager([leftSideBar.model, bottomSideBar.model], tabButtonStyle, tabButtonStyleHover, onTabClicked, onTabManagerChange);
         tabbedContentManager.placeItemsInInitialLocations();
     })
