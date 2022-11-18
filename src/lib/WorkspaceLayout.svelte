@@ -7,6 +7,7 @@
     import * as tabMgr from "./TabbedContentManager"
 
     /* public properties */
+    // TODO: Package these in an interface.
     export let borderWidth_px: number = 1;
     export let controlBar_backgroundColor: string = "";
     export let controlBarButton_color: string = "";
@@ -24,17 +25,65 @@
 
     let tabbedContentManager: tabMgr.TabbedContentManager | null = null; 
 
+    /*
     let contentHeight = 0;
     let useContentHeight = false;
-    
-    $: contentHeightToUse = useContentHeight ? (contentHeight + "px") : "auto";
+    let previousWindowInnerHeight: number = 0;
+    */
+    //$: contentHeightToUse = useContentHeight ? (contentHeight + "px") : "auto";
 
     onMount(() => {
+
+        getElementsIfNull();
+
         leftSideBar.model.isMinimized = minimizeLeftbarOnStart;
         bottomSideBar.model.isMinimized = minimizeBottombarOnStart;
         tabbedContentManager = new tabMgr.TabbedContentManager([leftSideBar.model, bottomSideBar.model], tabButtonStyle, tabButtonStyleHover, onTabClicked, onTabManagerChange);
         tabbedContentManager.placeItemsInInitialLocations();
+
+        /*
+        previousWindowInnerHeight = window.innerHeight;
+        window.onresize = onWindowResized;
+
+        //GET INITIAL CONTENT HEIGHT:
+        let wsE = document.getElementById("workspace_layout");
+        if(wsE)
+        {
+            let WS = wsE.getBoundingClientRect().height;
+            let SB = bottomSideBar.model.size;
+            contentHeight = WS - SB;
+            useContentHeight = true;
+        }*/
     })
+
+    /**
+     * Callback for windo resize events.
+     * This callback is used to ammend the size of grid areas in the layout.
+     * @param event
+     */
+    /*
+    const onWindowResized = (event: UIEvent) => 
+    {
+        let currentWindowInnerHeight = window.innerHeight;
+        let deltaIH = previousWindowInnerHeight - currentWindowInnerHeight;
+
+        //NOTE:
+        //if deltaIH < 0 => screen grew.
+        //if deltaIH > 0 => screem shrunk.
+        if(deltaIH > 0 && contentHeight < 10)
+        {
+            bottomSideBar.model.isResizing = true;
+            bottomSideBar.resize(bottomSideBar.model.size - deltaIH);
+            bottomSideBar.model.isResizing = false;
+            bottomSideBar = bottomSideBar;
+        } 
+        else
+        {
+            contentHeight -= deltaIH;
+        }
+
+        previousWindowInnerHeight = currentWindowInnerHeight;
+    }*/
 
     const onTabClicked = (tabContainerName: string) =>
     {
@@ -93,11 +142,12 @@
 
         //We need to calculate an offset here incase the layout is nested in another UI element.
         let sby = containerElement.getBoundingClientRect().top + containerElement.getBoundingClientRect().height - mouseY;
-        if(bottomSideBar.resize(sby))
+        bottomSideBar.resize(sby)
+    /*    if(bottomSideBar.resize(sby))
         {
             useContentHeight = true;
             contentHeight = containerElement.getBoundingClientRect().height - bottomSideBar.model.size;
-        }
+        }*/
 
         //This is needed to trigger Svelte reactivity.
         leftSideBar = leftSideBar;
@@ -189,44 +239,64 @@
 </script>
 
 
-<div class="container noselect" id="workspace_layout" on:mousemove={onMouseMove} on:mousedown={onMouseDown} on:mouseup={onMouseUp} on:mouseleave={onMouseUp}>
-    <div class="main-content" style="height: {contentHeightToUse}">
-        <slot name="main-content">Error: Missing Main Content Slot!</slot>
-    </div>
+<div class="container-horizontal noselect" id="workspace_layout" on:mousemove={onMouseMove} on:mousedown={onMouseDown} on:mouseup={onMouseUp} on:mouseleave={onMouseUp}>
     <Sidebar model={leftSideBar.model}
              controlBar_backgroundColor={controlBar_backgroundColor}
              controlBarButton_color={controlBarButton_color}
              on:open_close_event={onOpenCloseLeftbar}
              on:tab_change_event={onChangeTabLeftbar}>
     </Sidebar>
-    <Sidebar model={bottomSideBar.model}
-            controlBar_backgroundColor={controlBar_backgroundColor}
-            controlBarButton_color={controlBarButton_color}
-            on:open_close_event={onOpenCloseBottombar}
-            on:tab_change_event={onChangeTabBottombar}>
-    </Sidebar>
+    <div class="container-nested-vertical">
+        <div class="main-content">
+            <slot name="main-content">Error: Missing Main Content Slot!</slot>
+        </div>
+        <Sidebar model={bottomSideBar.model}
+                controlBar_backgroundColor={controlBar_backgroundColor}
+                controlBarButton_color={controlBarButton_color}
+                on:open_close_event={onOpenCloseBottombar}
+                on:tab_change_event={onChangeTabBottombar}>
+        </Sidebar>
+    </div>
 </div>
 
 <style>
-    .container{
+    .container-horizontal{
         width: 100%;
         height: 100%;
 
-        /**Flex Item Settings*/
-        flex-shrink: 1;
-		flex-grow: 1;
+        min-height: 0px;
 
         /** Grid Setup */
-        display: grid;
-        grid-template-columns: min-content minmax(0, 1fr);
-        grid-template-rows: minmax(0, 1fr) min-content;
-        grid-template-areas: 
-            "leftbar content"
-            "leftbar bottombar";
+        display: flex;
+        flex-direction: row;
+
+         /* Flex ITEM */
+         flex: 1;
+    }
+    .container-nested-vertical{
+        width: 100%;
+        height: 100%;
+
+        min-height: 0px;
+
+        /* Flex Item: If Leftbar Increases */
+        flex: 1; /* adjust automatically */
+        min-width: 0; /* allow flexing beyond auto width */
+        overflow-x: auto; /* scroll overflow on small width */
+
+        /* Flex Setup */
+        display: flex;
+        flex-direction: column;
     }
     .main-content{
-        grid-area: content;
-       
+        width: 100%;
+
+        /* Flex Item: If Bottombar Increases */
+        flex: 1; /* adjust automatically */
+        min-height: 0; /* allow flexing beyond auto height */
+        overflow-y: auto; /* scroll overflow on small height */
+
+        /* Flex Setup, For Slotted Content */
         display: flex;
         flex-direction: column;
     }

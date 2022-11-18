@@ -1,5 +1,5 @@
 <script lang="ts">
-    import WorkspaceGrid from '$lib/WorkspaceGrid.svelte'
+    import WorkspaceLayout from '$lib/WorkspaceLayout.svelte'
 	import ContentWrapper from '$lib/components/ContentWrapper.svelte';
     export let tabButtonStyle = "border: none; background-color: transparent; color: lightgray;";
     export let tabButtonStyleHover = "border: none; background-color: transparent; color: white;";
@@ -33,7 +33,7 @@
 <!--FONTS-->
 <!--COLORS-->
 
-<WorkspaceGrid controlBar_backgroundColor="darkslategray" controlBarButton_color="ghostwhite" tabButtonStyle={tabButtonStyle} tabButtonStyleHover={tabButtonStyleHover} minimizeLeftbarOnStart={true}>
+<WorkspaceLayout controlBar_backgroundColor="darkslategray" controlBarButton_color="ghostwhite" tabButtonStyle={tabButtonStyle} tabButtonStyleHover={tabButtonStyleHover} minimizeLeftbarOnStart={true}>
     <div class="test c1" slot="main-content">
         <div>CONTENT 1.1</div>
         <div>CONTENT 1.2</div>
@@ -66,7 +66,7 @@
         <div>CONTENT 1.4</div>
         <div>CONTENT 1.5</div>
     </div>
-</WorkspaceGrid>
+</WorkspaceLayout>
 
 <div class="footer"><div>F2</div></div>
 </div>
@@ -84,6 +84,8 @@
     }
 
     .test{
+        min-width: 0px;
+        min-height: 0px;
         width: 100%;
         height: 100%;
         background-color:slategray;

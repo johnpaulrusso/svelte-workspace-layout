@@ -28,7 +28,7 @@
 
 <!-- Dependent on Google material symbols -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-<div class="container tabbable-content-container {vertical}" id={model.name} style="display: {display}; height: {model.height}; width: {model.width}; grid-area: {model.gridarea}; {model.border}">
+<div class="container tabbable-content-container {vertical}" id={model.name} style="display: {display}; {model.border}">
     <div class="control-bar {vertical}" style="{size} background-color: {controlBar_backgroundColor}">
         <div class={CLASS_TAB_BUTTON_CONTAINER}></div>
         <span class="material-symbols-outlined control-button" style="color: {controlBarButton_color};" on:click={onClickOpenClose} on:keydown={()=>{}}>{controlButtonSymbolName}</span>
@@ -38,8 +38,11 @@
 </div>
 <style>
     .container{
+        /*LEFT*/
+
+        /*BOTTOM */
+
         flex-direction: column;
-        grid-area: sidebar;
         overflow: hidden;
     }
     .container.vertical{
