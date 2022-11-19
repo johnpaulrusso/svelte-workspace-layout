@@ -1,10 +1,10 @@
 <script lang="ts">
     import {onMount} from "svelte";
-    import Sidebar from "./components/Sidebar.svelte";
-    import { MIN_SIDEBAR_SIZE_PX } from "./controllers/SidebarController";
-    import { LeftbarController } from "./controllers/LeftbarController";
-    import { BottombarController } from "./controllers/BottombarController";
-    import * as tabMgr from "./TabbedContentManager"
+    import Sidebar from "./Sidebar.svelte";
+    import { MIN_SIDEBAR_SIZE_PX } from "../controllers/SidebarController";
+    import { LeftbarController } from "../controllers/LeftbarController";
+    import { BottombarController } from "../controllers/BottombarController";
+    import * as tabMgr from "../controllers/TabbedContentController"
 
     /* public properties */
     // TODO: Package these in an interface.
@@ -25,13 +25,6 @@
 
     let tabbedContentManager: tabMgr.TabbedContentManager | null = null; 
 
-    /*
-    let contentHeight = 0;
-    let useContentHeight = false;
-    let previousWindowInnerHeight: number = 0;
-    */
-    //$: contentHeightToUse = useContentHeight ? (contentHeight + "px") : "auto";
-
     onMount(() => {
 
         getElementsIfNull();
@@ -40,50 +33,7 @@
         bottomSideBar.model.isMinimized = minimizeBottombarOnStart;
         tabbedContentManager = new tabMgr.TabbedContentManager([leftSideBar.model, bottomSideBar.model], tabButtonStyle, tabButtonStyleHover, onTabClicked, onTabManagerChange);
         tabbedContentManager.placeItemsInInitialLocations();
-
-        /*
-        previousWindowInnerHeight = window.innerHeight;
-        window.onresize = onWindowResized;
-
-        //GET INITIAL CONTENT HEIGHT:
-        let wsE = document.getElementById("workspace_layout");
-        if(wsE)
-        {
-            let WS = wsE.getBoundingClientRect().height;
-            let SB = bottomSideBar.model.size;
-            contentHeight = WS - SB;
-            useContentHeight = true;
-        }*/
     })
-
-    /**
-     * Callback for windo resize events.
-     * This callback is used to ammend the size of grid areas in the layout.
-     * @param event
-     */
-    /*
-    const onWindowResized = (event: UIEvent) => 
-    {
-        let currentWindowInnerHeight = window.innerHeight;
-        let deltaIH = previousWindowInnerHeight - currentWindowInnerHeight;
-
-        //NOTE:
-        //if deltaIH < 0 => screen grew.
-        //if deltaIH > 0 => screem shrunk.
-        if(deltaIH > 0 && contentHeight < 10)
-        {
-            bottomSideBar.model.isResizing = true;
-            bottomSideBar.resize(bottomSideBar.model.size - deltaIH);
-            bottomSideBar.model.isResizing = false;
-            bottomSideBar = bottomSideBar;
-        } 
-        else
-        {
-            contentHeight -= deltaIH;
-        }
-
-        previousWindowInnerHeight = currentWindowInnerHeight;
-    }*/
 
     const onTabClicked = (tabContainerName: string) =>
     {
@@ -142,12 +92,7 @@
 
         //We need to calculate an offset here incase the layout is nested in another UI element.
         let sby = containerElement.getBoundingClientRect().top + containerElement.getBoundingClientRect().height - mouseY;
-        bottomSideBar.resize(sby)
-    /*    if(bottomSideBar.resize(sby))
-        {
-            useContentHeight = true;
-            contentHeight = containerElement.getBoundingClientRect().height - bottomSideBar.model.size;
-        }*/
+        bottomSideBar.resize(sby);
 
         //This is needed to trigger Svelte reactivity.
         leftSideBar = leftSideBar;

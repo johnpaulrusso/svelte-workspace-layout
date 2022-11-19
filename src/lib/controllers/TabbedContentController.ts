@@ -3,7 +3,7 @@
  * 
  *  slotted-wrapper-content could be any target, let the client decide!
  */
- import type { ISidebarModel } from "./models/SidebarModel";
+ import type { ISidebarModel } from "../models/SidebarModel";
 
 export const CLASS_TABBABLE_CONTENT: string = "tabbable-content";
 export const CLASS_TABBABLE_CONTENT_CONTAINER: string = "tabbable-content-container";

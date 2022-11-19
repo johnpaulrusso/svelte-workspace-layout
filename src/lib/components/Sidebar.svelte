@@ -3,7 +3,7 @@
     import {MIN_SIDEBAR_SIZE_PX} from "../controllers/SidebarController";
     import type {ISidebarModel} from "../models/SidebarModel"
     import {SidebarOrientation} from "../models/SidebarModel"
-    import {CLASS_TAB_BUTTON_CONTAINER, CLASS_STAGED_TABS, CLASS_ACTIVE_TAB} from "../TabbedContentManager"
+    import {CLASS_TAB_BUTTON_CONTAINER, CLASS_STAGED_TABS, CLASS_ACTIVE_TAB} from "../controllers/TabbedContentController"
 
     const dispatch = createEventDispatcher();
 

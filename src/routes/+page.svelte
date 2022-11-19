@@ -1,5 +1,5 @@
 <script lang="ts">
-    import WorkspaceLayout from '$lib/WorkspaceLayout.svelte'
+    import WorkspaceLayout from '$lib/components/WorkspaceLayout.svelte'
 	import ContentWrapper from '$lib/components/ContentWrapper.svelte';
     export let tabButtonStyle = "border: none; background-color: transparent; color: lightgray;";
     export let tabButtonStyleHover = "border: none; background-color: transparent; color: white;";
