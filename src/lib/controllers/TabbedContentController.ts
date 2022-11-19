@@ -12,6 +12,8 @@ export const CLASS_STAGED_TABS: string = "staged-tabs";
 export const CLASS_ACTIVE_TAB: string = "active-tab";
 export const CLASS_TAB_BUTTON_CONTAINER: string = "tab-buttons"
 
+
+
 function getSingletonElementByClassFrom(parentElement: HTMLElement, className: string): HTMLElement | null
 {
     let element: HTMLElement | null = null;
@@ -30,6 +32,9 @@ export class TabbedContentManager{
     buttonHoverStyle: string = "";
     tabClickedCallback: ((tabContainerName: string) => void) | null = null;
     onChangeCallback:  ((tabContainerName: string) => void) | null = null;
+
+    /** Use this to identify content wrappers. */
+    #nextContentUid: number = 0;
     
     constructor(tabbedContentContainerModels: ISidebarModel[], buttonStyle?: string, buttonHoverStyle?: string, tabClickedCallback?: (tabContainerName: string) => void, onChangeCallback?: (tabContainerName: string) => void)
     {
@@ -66,6 +71,7 @@ export class TabbedContentManager{
             let tabbedContentContainerModel = this.tabbedContentContainerModels.find(m => m.name === wc.dataset.parentid);
             if(tabbedContentContainerModel)
             {
+                wc.dataset.uid = String(this.#nextContentUid++);
                 this.#placeInStagingElementOfParentId(tabbedContentContainerModel.name, wc);
 
                 if(!tabbedContentContainerModel.isDisplayed && this.onChangeCallback)
@@ -156,11 +162,15 @@ export class TabbedContentManager{
         }
     }
 
+    /**
+     * 
+     * @param tabbedFlexItem - the parent tab container.
+     */
     #createTabButtonsForAllStagedElements(tabbedFlexItem : HTMLElement)
     {
         let stagingItem = getSingletonElementByClassFrom(tabbedFlexItem as HTMLElement, CLASS_STAGED_TABS);
         let buttonContainer = getSingletonElementByClassFrom(tabbedFlexItem as HTMLElement, CLASS_TAB_BUTTON_CONTAINER);
-        
+
         if(stagingItem && buttonContainer)
         {
             let childWrappers = stagingItem.getElementsByClassName(CLASS_TABBABLE_CONTENT) as HTMLCollectionOf<HTMLElement>;
@@ -169,6 +179,8 @@ export class TabbedContentManager{
                 {
                     let tabButton = document.createElement("button");
                     tabButton.style.cssText = this.buttonStyle;
+                    tabButton.classList.add("tab-button");
+                    tabButton.setAttribute('data-uid', cw.dataset.uid);
                     tabButton.onmouseover = () =>
                     {
                         tabButton.style.cssText = this.buttonHoverStyle;
@@ -190,6 +202,10 @@ export class TabbedContentManager{
         }
     }
 
+    /**
+     * #setInitialActiveTab - Sets the first tabbable content child of the staging element to the active element.
+     * @param tabbedFlexItem - the parent tab container.
+     */
     #setInitialActiveTab(tabbedFlexItem : HTMLElement)
     {
         let stagingItem = getSingletonElementByClassFrom(tabbedFlexItem as HTMLElement, CLASS_STAGED_TABS);
@@ -200,6 +216,7 @@ export class TabbedContentManager{
             let childWrappers = stagingItem.getElementsByClassName(CLASS_TABBABLE_CONTENT) as HTMLCollectionOf<HTMLElement>;
             if(childWrappers.length > 0)
             {
+                //Set the first child in the list to the active tab.
                 let childWrapperToAdd = childWrappers.item(0);
                 if(childWrapperToAdd)
                 {
