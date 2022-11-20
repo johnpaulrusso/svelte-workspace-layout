@@ -54,6 +54,9 @@ const config: WorkspaceLayoutConfiguration = {
 ```
 
 2.) Declare the content wrapped content at the top level of the document.
+> Use a parentId of either "leftsidebar" or "bottomsidebar" depending on desired initial location.
+> If more than one ContentWrapper share a parentId, the content in that parent will be tabbed.
+> If no ContentWrapper is placed in either parentId, that parent will not be displayed.
 ```html
 <ContentWrapper parentId="leftsidebar" name="CONTENT 2">
     <div slot="content">CONTENT 2</div>
