@@ -5,23 +5,26 @@
     import { LeftbarController } from "../controllers/LeftbarController";
     import { BottombarController } from "../controllers/BottombarController";
     import * as tabMgr from "../controllers/TabbedContentController"
+    import type {WorkspaceLayoutConfiguration} from "../models/WorkspaceLayoutConfiguration"
 
     /* public properties */
     // TODO: Package these in an interface.
-    export let borderWidth_px: number = 1;
-    export let controlBar_backgroundColor: string = "";
-    export let controlBarButton_color: string = "";
-    export let tabButtonStyle = "";
-    export let tabButtonStyleHover = "";
-    export let minimizeLeftbarOnStart = false;
-    export let minimizeBottombarOnStart = false;
+    export let config: WorkspaceLayoutConfiguration = {
+        borderWidth_px: 1,
+        controlBar_backgroundColor: "",
+        controlBarButton_color: "",
+        tabButtonStyle: "",
+        tabButtonStyleHover: "",
+        minimizeLeftbarOnStart: false,
+        minimizeBottombarOnStart: false
+    };
 
     let mouseX: number = 0;
     let mouseY: number = 0;
     let containerElement: HTMLElement | null;
 
-    let leftSideBar: LeftbarController = new LeftbarController("leftsidebar", minimizeLeftbarOnStart ? MIN_SIDEBAR_SIZE_PX : 200);
-    let bottomSideBar: BottombarController = new BottombarController("bottomsidebar", minimizeBottombarOnStart ? MIN_SIDEBAR_SIZE_PX : 200);
+    let leftSideBar: LeftbarController = new LeftbarController("leftsidebar", config.minimizeLeftbarOnStart ? MIN_SIDEBAR_SIZE_PX : 200);
+    let bottomSideBar: BottombarController = new BottombarController("bottomsidebar", config.minimizeBottombarOnStart ? MIN_SIDEBAR_SIZE_PX : 200);
 
     let tabbedContentManager: tabMgr.TabbedContentManager | null = null; 
 
@@ -29,9 +32,9 @@
 
         getElementsIfNull();
 
-        leftSideBar.model.isMinimized = minimizeLeftbarOnStart;
-        bottomSideBar.model.isMinimized = minimizeBottombarOnStart;
-        tabbedContentManager = new tabMgr.TabbedContentManager([leftSideBar.model, bottomSideBar.model], tabButtonStyle, tabButtonStyleHover, onTabClicked, onTabManagerChange);
+        leftSideBar.model.isMinimized = config.minimizeLeftbarOnStart;
+        bottomSideBar.model.isMinimized = config.minimizeBottombarOnStart;
+        tabbedContentManager = new tabMgr.TabbedContentManager([leftSideBar.model, bottomSideBar.model], config.tabButtonStyle, config.tabButtonStyleHover, onTabClicked, onTabManagerChange);
         tabbedContentManager.placeItemsInInitialLocations();
     })
 
@@ -81,8 +84,8 @@
 
         if(!containerElement) {return}
         
-        leftSideBar.updateIsMouseOverBorder(mouseX, mouseY, borderWidth_px);
-        bottomSideBar.updateIsMouseOverBorder(mouseX, mouseY, borderWidth_px);
+        leftSideBar.updateIsMouseOverBorder(mouseX, mouseY, config.borderWidth_px);
+        bottomSideBar.updateIsMouseOverBorder(mouseX, mouseY, config.borderWidth_px);
 
         updateCursorStyle();
 
@@ -186,8 +189,8 @@
 
 <div class="container-horizontal noselect" id="workspace_layout" on:mousemove={onMouseMove} on:mousedown={onMouseDown} on:mouseup={onMouseUp} on:mouseleave={onMouseUp}>
     <Sidebar model={leftSideBar.model}
-             controlBar_backgroundColor={controlBar_backgroundColor}
-             controlBarButton_color={controlBarButton_color}
+             controlBar_backgroundColor={config.controlBar_backgroundColor}
+             controlBarButton_color={config.controlBarButton_color}
              on:open_close_event={onOpenCloseLeftbar}
              on:tab_change_event={onChangeTabLeftbar}>
     </Sidebar>
@@ -196,8 +199,8 @@
             <slot name="main-content">Error: Missing Main Content Slot!</slot>
         </div>
         <Sidebar model={bottomSideBar.model}
-                controlBar_backgroundColor={controlBar_backgroundColor}
-                controlBarButton_color={controlBarButton_color}
+                controlBar_backgroundColor={config.controlBar_backgroundColor}
+                controlBarButton_color={config.controlBarButton_color}
                 on:open_close_event={onOpenCloseBottombar}
                 on:tab_change_event={onChangeTabBottombar}>
         </Sidebar>

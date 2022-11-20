@@ -132,7 +132,8 @@ export class TabbedContentManager{
                         //SWAP THIS WITH ACTIVE, PUT ACTIVE BACK INTO STAGING.
                         stagingItem?.appendChild(activeContentWrapper);
                         activeItem?.appendChild(cws);
-                        this.#activeUid = cws.dataset.uid;
+                        this.#activeUid = cws.dataset.uid!;
+                        
                     }
                 })
 
@@ -185,7 +186,7 @@ export class TabbedContentManager{
                     let tabButton = document.createElement("button");
                     tabButton.style.cssText = this.buttonStyle;
                     tabButton.classList.add("tab-button");
-                    tabButton.setAttribute('data-uid', cw.dataset.uid);
+                    tabButton.setAttribute('data-uid', cw.dataset.uid!);
                     tabButton.onmouseover = () =>
                     {
                         tabButton.style.cssText = this.buttonHoverStyle;
@@ -228,7 +229,7 @@ export class TabbedContentManager{
                 if(childWrapperToAdd)
                 {
                     activeItem.appendChild(childWrapperToAdd);
-                    this.#activeUid = childWrapperToAdd.dataset.uid;
+                    this.#activeUid = childWrapperToAdd.dataset.uid!;
                 }
             }
         }
@@ -241,7 +242,7 @@ export class TabbedContentManager{
      * depending on the active UID. 
      * @param buttonContainer 
      */
-    #setTabButtonActiveClass(buttonContainer: HTMLElement)
+    #setTabButtonActiveClass(buttonContainer: HTMLElement | null)
     {
         if(buttonContainer)
         {

@@ -1,8 +1,20 @@
 <script lang="ts">
     import WorkspaceLayout from '$lib/components/WorkspaceLayout.svelte'
 	import ContentWrapper from '$lib/components/ContentWrapper.svelte';
-    export let tabButtonStyle = "border: none; background-color: transparent; color: lightgray;";
-    export let tabButtonStyleHover = "border: none; background-color: transparent; color: white;";
+    import type {WorkspaceLayoutConfiguration} from "$lib/models/WorkspaceLayoutConfiguration"
+    const tabButtonStyle = "border: none; background-color: transparent; color: lightgray;";
+    const tabButtonStyleHover = "border: none; background-color: transparent; color: white;";
+
+    const config: WorkspaceLayoutConfiguration = {
+        borderWidth_px: 1,
+        controlBar_backgroundColor: "darkslategray",
+        controlBarButton_color: "ghostwhite",
+        tabButtonStyle: tabButtonStyle,
+        tabButtonStyleHover: tabButtonStyleHover,
+        minimizeLeftbarOnStart: true,
+        minimizeBottombarOnStart: false
+    };
+    
 </script>
 
 <ContentWrapper parentId="leftsidebar" name="CONTENT 2">
@@ -33,7 +45,7 @@
 <!--FONTS-->
 <!--COLORS-->
 
-<WorkspaceLayout controlBar_backgroundColor="darkslategray" controlBarButton_color="ghostwhite" tabButtonStyle={tabButtonStyle} tabButtonStyleHover={tabButtonStyleHover} minimizeLeftbarOnStart={true}>
+<WorkspaceLayout config={config}>
     <div class="test c1" slot="main-content">
         <div>CONTENT 1.1</div>
         <div>CONTENT 1.2</div>
