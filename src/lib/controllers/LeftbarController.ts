@@ -28,9 +28,5 @@ export class LeftbarController extends SidebarController
     resizeCustom(): void
     {
         this.model.width = this.model.size + "px";
-        if(this.element)
-        {
-            this.element.style.width = this.model.width;
-        }
     }
 }

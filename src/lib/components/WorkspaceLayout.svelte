@@ -1,5 +1,5 @@
 <script lang="ts">
-    import {onMount} from "svelte";
+    import {onMount, afterUpdate} from "svelte";
     import Sidebar from "./Sidebar.svelte";
     import { MIN_SIDEBAR_SIZE_PX } from "../controllers/SidebarController";
     import { LeftbarController } from "../controllers/LeftbarController";
@@ -34,6 +34,7 @@
 
         leftSideBar.model.isMinimized = config.minimizeLeftbarOnStart;
         bottomSideBar.model.isMinimized = config.minimizeBottombarOnStart;
+    
         tabbedContentManager = new tabMgr.TabbedContentManager([leftSideBar.model, bottomSideBar.model], config.tabButtonStyle, config.tabButtonStyleHover, onTabClicked, onTabManagerChange);
         tabbedContentManager.placeItemsInInitialLocations();
     })

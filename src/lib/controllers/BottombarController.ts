@@ -30,9 +30,5 @@ export class BottombarController extends SidebarController
     resizeCustom(): void
     {
         this.model.height = this.model.size + "px";
-        if(this.element)
-        {
-            this.element.style.height = this.model.height;
-        }
     }
 }
