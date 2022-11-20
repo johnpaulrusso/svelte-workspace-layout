@@ -36,3 +36,36 @@ npm run build
 You can preview the production build with `npm run preview`.
 
 > To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+
+## Usage
+
+1.) Create a configuration
+
+```javascript
+const config: WorkspaceLayoutConfiguration = {
+    borderWidth_px: 1,
+    controlBar_backgroundColor: "darkslategray",
+    controlBarButton_color: "ghostwhite",
+    tabButtonStyle: tabButtonStyle,
+    tabButtonStyleHover: tabButtonStyleHover,
+    minimizeLeftbarOnStart: true,
+    minimizeBottombarOnStart: false
+};
+```
+
+2.) Declare the content wrapped content at the top level of the document.
+```html
+<ContentWrapper parentId="leftsidebar" name="CONTENT 2">
+    <div slot="content">CONTENT 2</div>
+</ContentWrapper>
+```
+
+3.) Declare the workspace layout component in the document.
+```html
+<WorkspaceLayout config={config}>
+    <div slot="main-content">CONTENT</div>
+</WorkspaceLayout>
+```
+
+
+
