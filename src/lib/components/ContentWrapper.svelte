@@ -3,7 +3,7 @@
     export let parentId: string = "";
 </script>
 
-<div class="tabbable-content" data-parentid={parentId} data-name={name}>
+<div class="tabbable-content" data-parentid={parentId} data-name={name} data-uid="-1">
     <slot name="content">Content Wrapper Missing Content!</slot>
 </div>
 

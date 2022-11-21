@@ -3,12 +3,16 @@
  * 
  *  slotted-wrapper-content could be any target, let the client decide!
  */
+ import type { ISidebarModel } from "../models/SidebarModel";
+
 export const CLASS_TABBABLE_CONTENT: string = "tabbable-content";
 export const CLASS_TABBABLE_CONTENT_CONTAINER: string = "tabbable-content-container";
 
 export const CLASS_STAGED_TABS: string = "staged-tabs";
 export const CLASS_ACTIVE_TAB: string = "active-tab";
 export const CLASS_TAB_BUTTON_CONTAINER: string = "tab-buttons"
+
+
 
 function getSingletonElementByClassFrom(parentElement: HTMLElement, className: string): HTMLElement | null
 {
@@ -23,14 +27,19 @@ function getSingletonElementByClassFrom(parentElement: HTMLElement, className: s
 
 
 export class TabbedContentManager{
-    tabbedContentContainerIds: string[] = [];
+    tabbedContentContainerModels: ISidebarModel[] = [];
     buttonStyle: string = "";
     buttonHoverStyle: string = "";
     tabClickedCallback: ((tabContainerName: string) => void) | null = null;
+    onChangeCallback:  ((tabContainerName: string) => void) | null = null;
+
+    /** Use this to identify content wrappers. */
+    #nextContentUid: number = 0;
+    #activeUid: string = "-1";
     
-    constructor(tabbedContentContainerIds: string[], buttonStyle?: string, buttonHoverStyle?: string, tabClickedCallback?: (tabContainerName: string) => void)
+    constructor(tabbedContentContainerModels: ISidebarModel[], buttonStyle?: string, buttonHoverStyle?: string, tabClickedCallback?: (tabContainerName: string) => void, onChangeCallback?: (tabContainerName: string) => void)
     {
-        this.tabbedContentContainerIds = tabbedContentContainerIds;
+        this.tabbedContentContainerModels = tabbedContentContainerModels;
         if(buttonStyle)
         {
             this.buttonStyle = buttonStyle;
@@ -42,6 +51,10 @@ export class TabbedContentManager{
         if(tabClickedCallback)
         {
             this.tabClickedCallback = tabClickedCallback;
+        }
+        if(onChangeCallback)
+        {
+            this.onChangeCallback = onChangeCallback;
         }
     }
 
@@ -56,8 +69,18 @@ export class TabbedContentManager{
         //For each ContentWrapper, place in the commanded TabbedFlexItem's staging element.
         let allWrappedContent = document.getElementsByClassName(CLASS_TABBABLE_CONTENT) as HTMLCollectionOf<HTMLElement>;
         Array.from(allWrappedContent).forEach(wc => {
-            let tabbedContentContainerId = this.tabbedContentContainerIds.find(pid => pid === wc.dataset.parentid);
-            this.#placeInStagingElementOfParentId(tabbedContentContainerId, wc);
+            let tabbedContentContainerModel = this.tabbedContentContainerModels.find(m => m.name === wc.dataset.parentid);
+            if(tabbedContentContainerModel)
+            {
+                wc.dataset.uid = String(this.#nextContentUid++);
+                this.#placeInStagingElementOfParentId(tabbedContentContainerModel.name, wc);
+
+                if(!tabbedContentContainerModel.isDisplayed && this.onChangeCallback)
+                {
+                    tabbedContentContainerModel.isDisplayed = true;
+                    this.onChangeCallback(tabbedContentContainerModel.name);
+                }
+            }
         });
 
         //For each tab container, make the first staged-tab the active tab.
@@ -80,6 +103,7 @@ export class TabbedContentManager{
 
             let stagingItem = getSingletonElementByClassFrom(parentTabbedFlexItem as HTMLElement, CLASS_STAGED_TABS);
             let activeItem = getSingletonElementByClassFrom(parentTabbedFlexItem as HTMLElement, CLASS_ACTIVE_TAB);
+            let buttonContainer = getSingletonElementByClassFrom(parentTabbedFlexItem as HTMLElement, CLASS_TAB_BUTTON_CONTAINER);
 
             let isAlreadyActive = false;
             if(activeItem)
@@ -108,8 +132,12 @@ export class TabbedContentManager{
                         //SWAP THIS WITH ACTIVE, PUT ACTIVE BACK INTO STAGING.
                         stagingItem?.appendChild(activeContentWrapper);
                         activeItem?.appendChild(cws);
+                        this.#activeUid = cws.dataset.uid!;
+                        
                     }
                 })
+
+                this.#setTabButtonActiveClass(buttonContainer);
             }
 
             //Finally, emit the callback so the client knows the tab was clicked/changed.
@@ -140,11 +168,15 @@ export class TabbedContentManager{
         }
     }
 
+    /**
+     * 
+     * @param tabbedFlexItem - the parent tab container.
+     */
     #createTabButtonsForAllStagedElements(tabbedFlexItem : HTMLElement)
     {
         let stagingItem = getSingletonElementByClassFrom(tabbedFlexItem as HTMLElement, CLASS_STAGED_TABS);
         let buttonContainer = getSingletonElementByClassFrom(tabbedFlexItem as HTMLElement, CLASS_TAB_BUTTON_CONTAINER);
-        
+
         if(stagingItem && buttonContainer)
         {
             let childWrappers = stagingItem.getElementsByClassName(CLASS_TABBABLE_CONTENT) as HTMLCollectionOf<HTMLElement>;
@@ -153,13 +185,16 @@ export class TabbedContentManager{
                 {
                     let tabButton = document.createElement("button");
                     tabButton.style.cssText = this.buttonStyle;
+                    tabButton.classList.add("tab-button");
+                    tabButton.setAttribute('data-uid', cw.dataset.uid!);
                     tabButton.onmouseover = () =>
                     {
                         tabButton.style.cssText = this.buttonHoverStyle;
                     }
                     tabButton.onmouseout = () =>
                     {
-                        tabButton.style.cssText = this.buttonStyle;
+                        let isActive: boolean = tabButton.classList.contains("active");
+                        tabButton.style.cssText = isActive ? this.buttonHoverStyle : this.buttonStyle;
                     }
                      
                     tabButton.innerHTML = cw.dataset.name ? cw.dataset.name : "";
@@ -174,22 +209,56 @@ export class TabbedContentManager{
         }
     }
 
+    /**
+     * #setInitialActiveTab - Sets the first tabbable content child of the staging element to the active element.
+     * @param tabbedFlexItem - the parent tab container.
+     */
     #setInitialActiveTab(tabbedFlexItem : HTMLElement)
     {
         let stagingItem = getSingletonElementByClassFrom(tabbedFlexItem as HTMLElement, CLASS_STAGED_TABS);
         let activeItem = getSingletonElementByClassFrom(tabbedFlexItem as HTMLElement, CLASS_ACTIVE_TAB);
+        let buttonContainer = getSingletonElementByClassFrom(tabbedFlexItem as HTMLElement, CLASS_TAB_BUTTON_CONTAINER);
 
         if(stagingItem && activeItem)
         {
             let childWrappers = stagingItem.getElementsByClassName(CLASS_TABBABLE_CONTENT) as HTMLCollectionOf<HTMLElement>;
             if(childWrappers.length > 0)
             {
+                //Set the first child in the list to the active tab.
                 let childWrapperToAdd = childWrappers.item(0);
                 if(childWrapperToAdd)
                 {
                     activeItem.appendChild(childWrapperToAdd);
+                    this.#activeUid = childWrapperToAdd.dataset.uid!;
                 }
             }
+        }
+
+        this.#setTabButtonActiveClass(buttonContainer)
+    }
+
+    /**
+     * setTabButtonActiveClass - add or remove the "active" class to/from tab buttons
+     * depending on the active UID. 
+     * @param buttonContainer 
+     */
+    #setTabButtonActiveClass(buttonContainer: HTMLElement | null)
+    {
+        if(buttonContainer)
+        {
+            let tabButtons = buttonContainer.getElementsByClassName("tab-button") as HTMLCollectionOf<HTMLElement>;
+            Array.from(tabButtons).forEach(btn => {
+                if(btn.dataset.uid === this.#activeUid)
+                {
+                    btn.classList.add("active");
+                    btn.style.cssText = this.buttonHoverStyle;
+                }
+                else
+                {
+                    btn.classList.remove("active");
+                    btn.style.cssText = this.buttonStyle;
+                }
+            });
         }
     }
 

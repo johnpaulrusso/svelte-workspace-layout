@@ -1,40 +1,41 @@
 <script lang="ts">
-    import {onMount} from "svelte";
-    import Sidebar from "./components/Sidebar.svelte";
-    import { LeftbarController } from "./controllers/LeftbarController";
-    import { BottombarController } from "./controllers/BottombarController";
-    import * as tabMgr from "./TabbedContentManager"
+    import {onMount, afterUpdate} from "svelte";
+    import Sidebar from "./Sidebar.svelte";
+    import { MIN_SIDEBAR_SIZE_PX } from "../controllers/SidebarController";
+    import { LeftbarController } from "../controllers/LeftbarController";
+    import { BottombarController } from "../controllers/BottombarController";
+    import * as tabMgr from "../controllers/TabbedContentController"
+    import type {WorkspaceLayoutConfiguration} from "../models/WorkspaceLayoutConfiguration"
 
     /* public properties */
-    export let borderWidth_px: number = 1;
-    export let controlBar_backgroundColor: string = "";
-    export let controlBarButton_color: string = "";
-    export let tabButtonStyle = "";
-    export let tabButtonStyleHover = "";
-   // export let borderColor: string = "lightgray";
-
-    /* private properties */
-    /*
-    let LEFTBAR_BORDER_STYLE: string = "border-style: none solid none none; border-color: " + 
-                                        borderColor + "; border-width: " + 
-                                        borderWidth_px + "px;";
-    let BOTTOMBAR_BORDER_STYLE: string = "border-style: solid none none none; border-color: " +                                       
-                                        borderColor + "; border-width: " + 
-                                        borderWidth_px + "px;";*/
+    // TODO: Package these in an interface.
+    export let config: WorkspaceLayoutConfiguration = {
+        borderWidth_px: 1,
+        controlBar_backgroundColor: "",
+        controlBarButton_color: "",
+        tabButtonStyle: "",
+        tabButtonStyleHover: "",
+        minimizeLeftbarOnStart: false,
+        minimizeBottombarOnStart: false
+    };
 
     let mouseX: number = 0;
     let mouseY: number = 0;
     let containerElement: HTMLElement | null;
 
-    let leftSideBar: LeftbarController = new LeftbarController("leftsidebar", 200);
-    let bottomSideBar: BottombarController = new BottombarController("bottomsidebar", 200);
+    let leftSideBar: LeftbarController = new LeftbarController("leftsidebar", config.minimizeLeftbarOnStart ? MIN_SIDEBAR_SIZE_PX : 200);
+    let bottomSideBar: BottombarController = new BottombarController("bottomsidebar", config.minimizeBottombarOnStart ? MIN_SIDEBAR_SIZE_PX : 200);
 
     let tabbedContentManager: tabMgr.TabbedContentManager | null = null; 
 
-
-
     onMount(() => {
-        tabbedContentManager = new tabMgr.TabbedContentManager(["leftsidebar", "bottomsidebar"], tabButtonStyle, tabButtonStyleHover, onTabClicked);
+
+        getElementsIfNull();
+
+        leftSideBar.model.isMinimized = config.minimizeLeftbarOnStart;
+        bottomSideBar.model.isMinimized = config.minimizeBottombarOnStart;
+    
+        tabbedContentManager = new tabMgr.TabbedContentManager([leftSideBar.model, bottomSideBar.model], config.tabButtonStyle, config.tabButtonStyleHover, onTabClicked, onTabManagerChange);
         tabbedContentManager.placeItemsInInitialLocations();
     })
 
@@ -58,6 +59,18 @@
         }
     }
 
+    const onTabManagerChange = (tabContainerName: string) => 
+    {
+        if(tabContainerName == "leftsidebar")
+        {
+            leftSideBar = leftSideBar;
+        }
+        if(tabContainerName == "bottomsidebar")
+        {
+            bottomSideBar = bottomSideBar;
+        }
+    }
+
     /**
      * This component must always monitor mouse movement to handle 
      * seemless sub-element resizing. 
@@ -72,13 +85,18 @@
 
         if(!containerElement) {return}
         
-        leftSideBar.updateIsMouseOverBorder(mouseX, mouseY, borderWidth_px);
-        bottomSideBar.updateIsMouseOverBorder(mouseX, mouseY, borderWidth_px);
+        leftSideBar.updateIsMouseOverBorder(mouseX, mouseY, config.borderWidth_px);
+        bottomSideBar.updateIsMouseOverBorder(mouseX, mouseY, config.borderWidth_px);
 
         updateCursorStyle();
 
-        leftSideBar.resize(mouseX);
-        bottomSideBar.resize(containerElement.getBoundingClientRect().height - mouseY);
+        //We need to calculate an offset here incase the layout is nested in another UI element.
+        let offsetX = containerElement.getBoundingClientRect().left;
+        leftSideBar.resize(mouseX + offsetX);
+
+        //We need to calculate an offset here incase the layout is nested in another UI element.
+        let sby = containerElement.getBoundingClientRect().top + containerElement.getBoundingClientRect().height - mouseY;
+        bottomSideBar.resize(sby);
 
         //This is needed to trigger Svelte reactivity.
         leftSideBar = leftSideBar;
@@ -170,49 +188,66 @@
 </script>
 
 
-<div class="container noselect" id="workspace_layout" on:mousemove={onMouseMove} on:mousedown={onMouseDown} on:mouseup={onMouseUp} on:mouseleave={onMouseUp}>
-  <!-- <div class={tabMgr.CLASS_TABBABLE_CONTENT_CONTAINER} id="main-content-container">
-        <div class={tabMgr.CLASS_TAB_BUTTON_CONTAINER}></div>
-        <div class={tabMgr.CLASS_ACTIVE_TAB}></div>
-        <div class={tabMgr.CLASS_STAGED_TABS}></div>
-    </div>--> 
-    <div class="main-content">
-        <slot name="main-content">Error: Missing Main Content Slot!</slot>
-    </div>
+<div class="container-horizontal noselect" id="workspace_layout" on:mousemove={onMouseMove} on:mousedown={onMouseDown} on:mouseup={onMouseUp} on:mouseleave={onMouseUp}>
     <Sidebar model={leftSideBar.model}
-             controlBar_backgroundColor={controlBar_backgroundColor}
-             controlBarButton_color={controlBarButton_color}
+             controlBar_backgroundColor={config.controlBar_backgroundColor}
+             controlBarButton_color={config.controlBarButton_color}
              on:open_close_event={onOpenCloseLeftbar}
              on:tab_change_event={onChangeTabLeftbar}>
     </Sidebar>
-    <Sidebar model={bottomSideBar.model}
-            controlBar_backgroundColor={controlBar_backgroundColor}
-            controlBarButton_color={controlBarButton_color}
-            on:open_close_event={onOpenCloseBottombar}
-            on:tab_change_event={onChangeTabBottombar}>
-    </Sidebar>
+    <div class="container-nested-vertical">
+        <div class="main-content">
+            <slot name="main-content">Error: Missing Main Content Slot!</slot>
+        </div>
+        <Sidebar model={bottomSideBar.model}
+                controlBar_backgroundColor={config.controlBar_backgroundColor}
+                controlBarButton_color={config.controlBarButton_color}
+                on:open_close_event={onOpenCloseBottombar}
+                on:tab_change_event={onChangeTabBottombar}>
+        </Sidebar>
+    </div>
 </div>
 
 <style>
-    .container{
+    .container-horizontal{
         width: 100%;
         height: 100%;
 
-        /** Grid Setup */
-        display: grid;
-        grid-template-columns: min-content minmax(0, 1fr);
-        grid-template-rows: minmax(0, 1fr) min-content;
-        grid-template-areas: 
-            "leftbar content"
-            "leftbar bottombar";
-    }
-    .main-content{
-        grid-area: content;
+        min-height: 0px;
 
+        /** Grid Setup */
+        display: flex;
+        flex-direction: row;
+
+         /* Flex ITEM */
+         flex: 1;
+    }
+    .container-nested-vertical{
+        width: 100%;
+        height: 100%;
+
+        min-height: 0px;
+
+        /* Flex Item: If Leftbar Increases */
+        flex: 1; /* adjust automatically */
+        min-width: 0; /* allow flexing beyond auto width */
+        overflow-x: auto; /* scroll overflow on small width */
+
+        /* Flex Setup */
         display: flex;
         flex-direction: column;
-       
-       
+    }
+    .main-content{
+        width: 100%;
+
+        /* Flex Item: If Bottombar Increases */
+        flex: 1; /* adjust automatically */
+        min-height: 0; /* allow flexing beyond auto height */
+        overflow-y: auto; /* scroll overflow on small height */
+
+        /* Flex Setup, For Slotted Content */
+        display: flex;
+        flex-direction: column;
     }
     .noselect {
         -webkit-touch-callout: none; /* iOS Safari */

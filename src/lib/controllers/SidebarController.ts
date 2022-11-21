@@ -26,7 +26,7 @@ export abstract class SidebarController
             isResizing: false,
             isMinimized: false,
             selectedTabName: "",
-            isDisplayed: true,
+            isDisplayed: false,
         }
         this.element = null;
     }
