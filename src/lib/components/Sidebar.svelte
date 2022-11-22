@@ -17,7 +17,7 @@
     $: sizeControlbar = (model.orientation === SidebarOrientation.VERTICAL) ? "width: " + MIN_SIDEBAR_SIZE_PX + "px;" : "height: " + MIN_SIDEBAR_SIZE_PX + "px;";
     $: size = (model.orientation === SidebarOrientation.VERTICAL) ? "width: " + model.width : "height: " + model.height;
     $: controlButtonSymbolName = (model.orientation === SidebarOrientation.VERTICAL) ? 
-        (model.isMinimized ? "expand_more" : "expand_less") :
+        (model.isMinimized ? "expand_less" : "expand_more") :
         (model.isMinimized ? "expand_less" : "expand_more");
 
     function onClickOpenClose()
@@ -31,11 +31,16 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 <div class="container tabbable-content-container {vertical}" id={model.name} style="{size}; display: {display}; {model.border}">
     <div class="control-bar {vertical}" style="{sizeControlbar} background-color: {controlBar_backgroundColor}">
+        {#if model.orientation === SidebarOrientation.HORIZONTAL}
         <div class={CLASS_TAB_BUTTON_CONTAINER}></div>
+        {/if}
         <span class="material-symbols-outlined control-button" style="color: {controlBarButton_color};" on:click={onClickOpenClose} on:keydown={()=>{}}>{controlButtonSymbolName}</span>
     </div>
     <div class={CLASS_ACTIVE_TAB}></div>
     <div class={CLASS_STAGED_TABS}></div>
+    {#if model.orientation === SidebarOrientation.VERTICAL}
+    <div class={CLASS_TAB_BUTTON_CONTAINER} style="background-color: {controlBar_backgroundColor}"></div>
+    {/if}
 </div>
 <style>
     .container{
@@ -61,8 +66,8 @@
         align-items: center;
     }
     .control-bar.vertical{
-        writing-mode: sideways-lr;
-        justify-content:flex-end;
+        writing-mode: vertical-lr;
+        justify-content:flex-start;
     }
 
     .active-tab{
