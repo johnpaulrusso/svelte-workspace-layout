@@ -1,4 +1,4 @@
-import { SidebarController, REZISE_MOUSE_TOLERANCE_PX } from "./SidebarController";
+import { SidebarController, REZISE_MOUSE_TOLERANCE_PX, MIN_SIDEBAR_HEIGHT_PX, SIDEBAR_AUTO_MINIMIZE_ZONE_PX } from "./SidebarController";
 import { SidebarOrientation } from "../models/SidebarModel";
 
 export class BottombarController extends SidebarController
@@ -30,5 +30,10 @@ export class BottombarController extends SidebarController
     resizeCustom(): void
     {
         this.model.height = this.model.size + "px";
+    }
+
+    getMinSize(): number
+    {
+        return MIN_SIDEBAR_HEIGHT_PX;
     }
 }

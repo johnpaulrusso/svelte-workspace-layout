@@ -1,7 +1,7 @@
 <script lang="ts">
     import {onMount, afterUpdate} from "svelte";
     import Sidebar from "./Sidebar.svelte";
-    import { MIN_SIDEBAR_SIZE_PX } from "../controllers/SidebarController";
+    import { MIN_SIDEBAR_HEIGHT_PX, MIN_SIDEBAR_WIDTH_PX  } from "../controllers/SidebarController";
     import { LeftbarController } from "../controllers/LeftbarController";
     import { BottombarController } from "../controllers/BottombarController";
     import * as tabMgr from "../controllers/TabbedContentController"
@@ -23,8 +23,8 @@
     let mouseY: number = 0;
     let containerElement: HTMLElement | null;
 
-    let leftSideBar: LeftbarController = new LeftbarController("leftsidebar", config.minimizeLeftbarOnStart ? MIN_SIDEBAR_SIZE_PX : 200);
-    let bottomSideBar: BottombarController = new BottombarController("bottomsidebar", config.minimizeBottombarOnStart ? MIN_SIDEBAR_SIZE_PX : 200);
+    let leftSideBar: LeftbarController = new LeftbarController("leftsidebar", config.minimizeLeftbarOnStart ? MIN_SIDEBAR_WIDTH_PX : 200);
+    let bottomSideBar: BottombarController = new BottombarController("bottomsidebar", config.minimizeBottombarOnStart ? MIN_SIDEBAR_HEIGHT_PX : 200);
 
     let tabbedContentManager: tabMgr.TabbedContentManager | null = null; 
 

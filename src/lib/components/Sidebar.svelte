@@ -1,6 +1,6 @@
 <script lang="ts">
     import {createEventDispatcher} from "svelte";
-    import {MIN_SIDEBAR_SIZE_PX} from "../controllers/SidebarController";
+    import {MIN_SIDEBAR_HEIGHT_PX, MIN_SIDEBAR_WIDTH_PX} from "../controllers/SidebarController";
     import type {ISidebarModel} from "../models/SidebarModel"
     import {SidebarOrientation} from "../models/SidebarModel"
     import {CLASS_TAB_BUTTON_CONTAINER, CLASS_STAGED_TABS, CLASS_ACTIVE_TAB} from "../controllers/TabbedContentController"
@@ -14,7 +14,7 @@
 
     $: display = model.isDisplayed ? "flex" : "none";
     $: vertical = (model.orientation === SidebarOrientation.VERTICAL) ? "vertical" : "";
-    $: sizeControlbar = (model.orientation === SidebarOrientation.VERTICAL) ? "width: " + MIN_SIDEBAR_SIZE_PX + "px;" : "height: " + MIN_SIDEBAR_SIZE_PX + "px;";
+    $: sizeControlbar = (model.orientation === SidebarOrientation.VERTICAL) ? "width: " + MIN_SIDEBAR_WIDTH_PX + "px;" : "height: " + MIN_SIDEBAR_HEIGHT_PX + "px;";
     $: size = (model.orientation === SidebarOrientation.VERTICAL) ? "width: " + model.width : "height: " + model.height;
     $: controlButtonSymbolName = (model.orientation === SidebarOrientation.VERTICAL) ? 
         (model.isMinimized ? "expand_less" : "expand_more") :
