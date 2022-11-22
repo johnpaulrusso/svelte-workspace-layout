@@ -14,7 +14,7 @@
 
     $: display = model.isDisplayed ? "flex" : "none";
     $: vertical = (model.orientation === SidebarOrientation.VERTICAL) ? "vertical" : "";
-    $: sizeControlbar = (model.orientation === SidebarOrientation.VERTICAL) ? "width: " + MIN_SIDEBAR_WIDTH_PX + "px;" : "height: " + MIN_SIDEBAR_HEIGHT_PX + "px;";
+    $: sizeControlbar = (model.orientation === SidebarOrientation.VERTICAL) ? "width: " + MIN_SIDEBAR_HEIGHT_PX + "px;" : "height: " + MIN_SIDEBAR_HEIGHT_PX + "px;";
     $: size = (model.orientation === SidebarOrientation.VERTICAL) ? "width: " + model.width : "height: " + model.height;
     $: controlButtonSymbolName = (model.orientation === SidebarOrientation.VERTICAL) ? 
         (model.isMinimized ? "expand_less" : "expand_more") :
@@ -30,12 +30,14 @@
 <!-- Dependent on Google material symbols -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 <div class="container tabbable-content-container {vertical}" id={model.name} style="{size}; display: {display}; {model.border}">
+    {#if !model.isMinimized || model.orientation === SidebarOrientation.HORIZONTAL}
     <div class="control-bar {vertical}" style="{sizeControlbar} background-color: {controlBar_backgroundColor}">
         {#if model.orientation === SidebarOrientation.HORIZONTAL}
         <div class={CLASS_TAB_BUTTON_CONTAINER}></div>
         {/if}
         <span class="material-symbols-outlined control-button" style="color: {controlBarButton_color};" on:click={onClickOpenClose} on:keydown={()=>{}}>{controlButtonSymbolName}</span>
     </div>
+    {/if}
     <div class={CLASS_ACTIVE_TAB}></div>
     <div class={CLASS_STAGED_TABS}></div>
     {#if model.orientation === SidebarOrientation.VERTICAL}
@@ -88,6 +90,7 @@
     }
 
     .tab-buttons.vertical{
+        max-width: 46px;
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
