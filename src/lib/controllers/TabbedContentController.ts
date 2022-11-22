@@ -197,6 +197,7 @@ export class TabbedContentManager{
                         buttonIconSpan.innerHTML = iconName;
                         buttonIconSpan.classList.add("material-symbols-outlined");
                         buttonIconSpan.setAttribute('data-uid', cw.dataset.uid!);
+                        buttonIconSpan.style.cssText = "font-size: xx-large; margin: 5px 3px 5px 3px";
                         tabButton.appendChild(buttonIconSpan)
                     }
                     else

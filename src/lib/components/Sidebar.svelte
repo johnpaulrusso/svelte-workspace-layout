@@ -39,7 +39,7 @@
     <div class={CLASS_ACTIVE_TAB}></div>
     <div class={CLASS_STAGED_TABS}></div>
     {#if model.orientation === SidebarOrientation.VERTICAL}
-    <div class={CLASS_TAB_BUTTON_CONTAINER} style="background-color: {controlBar_backgroundColor}"></div>
+    <div class={CLASS_TAB_BUTTON_CONTAINER + " vertical"} style="background-color: {controlBar_backgroundColor}"></div>
     {/if}
 </div>
 <style>
@@ -65,6 +65,7 @@
         justify-content: space-between;
         align-items: center;
     }
+
     .control-bar.vertical{
         writing-mode: vertical-lr;
         justify-content:flex-start;
@@ -85,10 +86,13 @@
       'GRAD' 0,
       'opsz' 20;
     }
-/*
-    .material-symbols-outlined.control-button:hover{
-        background-color:rgb(240, 240, 240);
-    }*/
+
+    .tab-buttons.vertical{
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+    }
 
     .staged-tabs{
         display: none;
