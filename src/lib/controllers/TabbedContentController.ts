@@ -189,6 +189,7 @@ export class TabbedContentManager{
                     tabButton.style.cssText = this.buttonStyle;
                     tabButton.classList.add("tab-button");
                     tabButton.setAttribute('data-uid', cw.dataset.uid!);
+                    tabButton.title = cw.dataset.name ? cw.dataset.name : "";
 
                     if(iconName)
                     {
