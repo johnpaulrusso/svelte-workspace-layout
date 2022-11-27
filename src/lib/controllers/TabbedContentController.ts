@@ -98,7 +98,7 @@ export class TabbedContentManager{
 
         if(parentTabbedFlexItem)
         {
-            let nameOfTarget = target.innerHTML;
+            let uidOfTarget = target.dataset.uid;
             let activeContentWrapper: HTMLElement | null = null;
 
             let stagingItem = getSingletonElementByClassFrom(parentTabbedFlexItem as HTMLElement, CLASS_STAGED_TABS);
@@ -114,7 +114,7 @@ export class TabbedContentManager{
                     activeContentWrapper = childWrappersActive.item(0);
                     if(activeContentWrapper)
                     {
-                        if(activeContentWrapper.dataset.name == nameOfTarget)
+                        if(activeContentWrapper.dataset.uid == uidOfTarget)
                         {
                             //No need to do anything, already active.
                             isAlreadyActive = true;
@@ -127,7 +127,7 @@ export class TabbedContentManager{
             {
                 let childWrappersStaging = stagingItem.getElementsByClassName(CLASS_TABBABLE_CONTENT) as HTMLCollectionOf<HTMLElement>;
                 Array.from(childWrappersStaging).forEach(cws => {
-                    if(cws && activeContentWrapper && cws.dataset.name == nameOfTarget)
+                    if(cws && activeContentWrapper && cws.dataset.uid == uidOfTarget)
                     {
                         //SWAP THIS WITH ACTIVE, PUT ACTIVE BACK INTO STAGING.
                         stagingItem?.appendChild(activeContentWrapper);
@@ -183,10 +183,28 @@ export class TabbedContentManager{
             Array.from(childWrappers).forEach(cw => {
                 if(cw)
                 {
+                    let iconName = cw.dataset.materialsymbol;
+
                     let tabButton = document.createElement("button");
                     tabButton.style.cssText = this.buttonStyle;
                     tabButton.classList.add("tab-button");
                     tabButton.setAttribute('data-uid', cw.dataset.uid!);
+                    tabButton.title = cw.dataset.name ? cw.dataset.name : "";
+
+                    if(iconName)
+                    {
+                        let buttonIconSpan = document.createElement("span");
+                        buttonIconSpan.innerHTML = iconName;
+                        buttonIconSpan.classList.add("material-symbols-outlined");
+                        buttonIconSpan.setAttribute('data-uid', cw.dataset.uid!);
+                        buttonIconSpan.style.cssText = "font-size: xx-large; margin: 5px 3px 5px 3px";
+                        tabButton.appendChild(buttonIconSpan)
+                    }
+                    else
+                    {
+                        tabButton.innerHTML = cw.dataset.name ? cw.dataset.name : "";
+                    }
+
                     tabButton.onmouseover = () =>
                     {
                         tabButton.style.cssText = this.buttonHoverStyle;
@@ -197,7 +215,7 @@ export class TabbedContentManager{
                         tabButton.style.cssText = isActive ? this.buttonHoverStyle : this.buttonStyle;
                     }
                      
-                    tabButton.innerHTML = cw.dataset.name ? cw.dataset.name : "";
+                    
                     
                     let self: TabbedContentManager = this;
                     tabButton.onclick = (event: Event) => {
