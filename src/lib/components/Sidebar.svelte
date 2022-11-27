@@ -1,6 +1,6 @@
 <script lang="ts">
     import {createEventDispatcher} from "svelte";
-    import {MIN_SIDEBAR_SIZE_PX} from "../controllers/SidebarController";
+    import {MIN_SIDEBAR_HEIGHT_PX, MIN_SIDEBAR_WIDTH_PX} from "../controllers/SidebarController";
     import type {ISidebarModel} from "../models/SidebarModel"
     import {SidebarOrientation} from "../models/SidebarModel"
     import {CLASS_TAB_BUTTON_CONTAINER, CLASS_STAGED_TABS, CLASS_ACTIVE_TAB} from "../controllers/TabbedContentController"
@@ -14,10 +14,10 @@
 
     $: display = model.isDisplayed ? "flex" : "none";
     $: vertical = (model.orientation === SidebarOrientation.VERTICAL) ? "vertical" : "";
-    $: sizeControlbar = (model.orientation === SidebarOrientation.VERTICAL) ? "width: " + MIN_SIDEBAR_SIZE_PX + "px;" : "height: " + MIN_SIDEBAR_SIZE_PX + "px;";
+    $: sizeControlbar = (model.orientation === SidebarOrientation.VERTICAL) ? "width: " + MIN_SIDEBAR_HEIGHT_PX + "px;" : "height: " + MIN_SIDEBAR_HEIGHT_PX + "px;";
     $: size = (model.orientation === SidebarOrientation.VERTICAL) ? "width: " + model.width : "height: " + model.height;
     $: controlButtonSymbolName = (model.orientation === SidebarOrientation.VERTICAL) ? 
-        (model.isMinimized ? "expand_more" : "expand_less") :
+        (model.isMinimized ? "expand_less" : "expand_more") :
         (model.isMinimized ? "expand_less" : "expand_more");
 
     function onClickOpenClose()
@@ -30,12 +30,19 @@
 <!-- Dependent on Google material symbols -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 <div class="container tabbable-content-container {vertical}" id={model.name} style="{size}; display: {display}; {model.border}">
+    {#if !model.isMinimized || model.orientation === SidebarOrientation.HORIZONTAL}
     <div class="control-bar {vertical}" style="{sizeControlbar} background-color: {controlBar_backgroundColor}">
+        {#if model.orientation === SidebarOrientation.HORIZONTAL}
         <div class={CLASS_TAB_BUTTON_CONTAINER}></div>
+        {/if}
         <span class="material-symbols-outlined control-button" style="color: {controlBarButton_color};" on:click={onClickOpenClose} on:keydown={()=>{}}>{controlButtonSymbolName}</span>
     </div>
+    {/if}
     <div class={CLASS_ACTIVE_TAB}></div>
     <div class={CLASS_STAGED_TABS}></div>
+    {#if model.orientation === SidebarOrientation.VERTICAL}
+    <div class={CLASS_TAB_BUTTON_CONTAINER + " vertical"} style="background-color: {controlBar_backgroundColor}"></div>
+    {/if}
 </div>
 <style>
     .container{
@@ -60,9 +67,10 @@
         justify-content: space-between;
         align-items: center;
     }
+
     .control-bar.vertical{
-        writing-mode: sideways-lr;
-        justify-content:flex-end;
+        writing-mode: vertical-lr;
+        justify-content:flex-start;
     }
 
     .active-tab{
@@ -80,10 +88,14 @@
       'GRAD' 0,
       'opsz' 20;
     }
-/*
-    .material-symbols-outlined.control-button:hover{
-        background-color:rgb(240, 240, 240);
-    }*/
+
+    .tab-buttons.vertical{
+        max-width: 46px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+    }
 
     .staged-tabs{
         display: none;

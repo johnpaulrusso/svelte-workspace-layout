@@ -1,5 +1,6 @@
 export const REZISE_MOUSE_TOLERANCE_PX: number = 5;
-export const MIN_SIDEBAR_SIZE_PX: number = 20;
+export const MIN_SIDEBAR_HEIGHT_PX: number = 20;
+export const MIN_SIDEBAR_WIDTH_PX: number = 46;
 export const SIDEBAR_AUTO_MINIMIZE_ZONE_PX: number = 50;
 export const DEFAULT_SIZE_PX: number = 200;
 
@@ -48,9 +49,11 @@ export abstract class SidebarController
     {
         if(this.model.isResizing && this.model.isDisplayed)
         {
-            if(size <= MIN_SIDEBAR_SIZE_PX + SIDEBAR_AUTO_MINIMIZE_ZONE_PX)
+            let minSize = this.getMinSize();
+
+            if(size <= minSize + SIDEBAR_AUTO_MINIMIZE_ZONE_PX)
             {
-                this.model.size = MIN_SIDEBAR_SIZE_PX;
+                this.model.size = minSize;
                 this.model.isMinimized = true;
             }
             else
@@ -90,7 +93,7 @@ export abstract class SidebarController
 
     close()
     {
-        this.model.size = MIN_SIDEBAR_SIZE_PX;
+        this.model.size = this.getMinSize();
         this.model.isMinimized = true;
         this.resizeCustom();
     }
@@ -111,4 +114,5 @@ export abstract class SidebarController
 
     abstract updateIsMouseOverBorder(mouseX: number, mouseY: number, borderWidth: number): void
     abstract resizeCustom(): void
+    abstract getMinSize(): number
 }
