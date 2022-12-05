@@ -10,6 +10,9 @@
 
 <style>
 .tabbable-content{
-    flex-grow: 1;
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
  }
 </style>
