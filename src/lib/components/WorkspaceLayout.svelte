@@ -185,21 +185,25 @@
     function onOpenCloseLeftbar() {
         leftSideBar.toggleOpenClose();
         leftSideBar = leftSideBar;
+        dispatch('sidebar-resized');
     }   
 
     function onOpenCloseBottombar() {
         bottomSideBar.toggleOpenClose();
         bottomSideBar = bottomSideBar;
+        dispatch('sidebar-resized');
     }   
 
     function onChangeTabLeftbar(event: CustomEvent) {
         leftSideBar.changeTab(event.detail);
         leftSideBar = leftSideBar;
+        dispatch('sidebar-resized');
     }   
 
     function onChangeTabBottombar(event: CustomEvent) {
         bottomSideBar.changeTab(event.detail);
         bottomSideBar = bottomSideBar;
+        dispatch('sidebar-resized');
     }   
 
 </script>
