@@ -2,7 +2,7 @@
     import {onMount, afterUpdate} from "svelte";
     import Sidebar from "./Sidebar.svelte";
     import { MIN_SIDEBAR_HEIGHT_PX, MIN_SIDEBAR_WIDTH_PX  } from "../controllers/SidebarController";
-    import { LeftbarController } from "../controllers/LeftbarController";
+    import { LeftbarController, LEFT_BAR_OFFSET_PX } from "../controllers/LeftbarController";
     import { BottombarController } from "../controllers/BottombarController";
     import * as tabMgr from "../controllers/TabbedContentController"
     import type {WorkspaceLayoutConfiguration} from "../models/WorkspaceLayoutConfiguration"
@@ -16,15 +16,18 @@
         tabButtonStyle: "",
         tabButtonStyleHover: "",
         minimizeLeftbarOnStart: false,
-        minimizeBottombarOnStart: false
+        minimizeBottombarOnStart: false,
+        defaultSidebarSizePx: 200
     };
 
     let mouseX: number = 0;
     let mouseY: number = 0;
     let containerElement: HTMLElement | null;
 
-    let leftSideBar: LeftbarController = new LeftbarController("leftsidebar", config.minimizeLeftbarOnStart ? MIN_SIDEBAR_WIDTH_PX : 200);
-    let bottomSideBar: BottombarController = new BottombarController("bottomsidebar", config.minimizeBottombarOnStart ? MIN_SIDEBAR_HEIGHT_PX : 200);
+    let defaultSize: number = config.defaultSidebarSizePx ? config.defaultSidebarSizePx : 200;
+
+    let leftSideBar: LeftbarController = new LeftbarController("leftsidebar", config.minimizeLeftbarOnStart ? MIN_SIDEBAR_WIDTH_PX : (defaultSize + LEFT_BAR_OFFSET_PX));
+    let bottomSideBar: BottombarController = new BottombarController("bottomsidebar", config.minimizeBottombarOnStart ? MIN_SIDEBAR_HEIGHT_PX : defaultSize);
 
     let tabbedContentManager: tabMgr.TabbedContentManager | null = null; 
 
@@ -34,6 +37,8 @@
 
         leftSideBar.model.isMinimized = config.minimizeLeftbarOnStart;
         bottomSideBar.model.isMinimized = config.minimizeBottombarOnStart;
+        leftSideBar.model.defaultSize = defaultSize + LEFT_BAR_OFFSET_PX;
+        bottomSideBar.model.defaultSize = defaultSize;
     
         tabbedContentManager = new tabMgr.TabbedContentManager([leftSideBar.model, bottomSideBar.model], config.tabButtonStyle, config.tabButtonStyleHover, onTabClicked, onTabManagerChange);
         tabbedContentManager.placeItemsInInitialLocations();

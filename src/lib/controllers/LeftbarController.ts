@@ -1,6 +1,8 @@
 import { SidebarController, REZISE_MOUSE_TOLERANCE_PX, MIN_SIDEBAR_WIDTH_PX, SIDEBAR_AUTO_MINIMIZE_ZONE_PX } from "./SidebarController";
 import { SidebarOrientation } from "../models/SidebarModel";
 
+export const LEFT_BAR_OFFSET_PX: number = 46;
+
 export class LeftbarController extends SidebarController
 {
     constructor(name: string, size: number)

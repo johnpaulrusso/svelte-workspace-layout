@@ -2,7 +2,7 @@ export const REZISE_MOUSE_TOLERANCE_PX: number = 5;
 export const MIN_SIDEBAR_HEIGHT_PX: number = 20;
 export const MIN_SIDEBAR_WIDTH_PX: number = 46;
 export const SIDEBAR_AUTO_MINIMIZE_ZONE_PX: number = 50;
-export const DEFAULT_SIZE_PX: number = 200;
+const DEFAULT_SIZE_PX: number = 200;
 
 import type { ISidebarModel } from "../models/SidebarModel";
 import { SidebarOrientation } from "../models/SidebarModel";
@@ -26,6 +26,7 @@ export abstract class SidebarController
             isMouseOverBorder: false,
             isResizing: false,
             isMinimized: false,
+            defaultSize: DEFAULT_SIZE_PX,
             selectedTabName: "",
             isDisplayed: false,
         }
@@ -86,7 +87,7 @@ export abstract class SidebarController
 
     open()
     {
-        this.model.size = DEFAULT_SIZE_PX;
+        this.model.size = this.model.defaultSize;
         this.model.isMinimized = false;
         this.resizeCustom();
     }
@@ -105,7 +106,7 @@ export abstract class SidebarController
             this.model.selectedTabName = tabName
             if(this.model.isMinimized)
             {
-                this.model.size = DEFAULT_SIZE_PX;
+                this.model.size = this.model.defaultSize;
                 this.model.isMinimized = false;
                 this.resizeCustom();
             }
