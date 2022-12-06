@@ -7,5 +7,5 @@ export interface WorkspaceLayoutConfiguration
     tabButtonStyleHover: string;
     minimizeLeftbarOnStart: boolean;
     minimizeBottombarOnStart: boolean;
-    defaultSidebarSizePx: number;
+    defaultSidebarSizePx?: number;
 }

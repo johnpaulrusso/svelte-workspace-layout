@@ -27,6 +27,7 @@ export interface ISidebarModel
     isResizing: boolean;
     isMinimized: boolean;
     isDisplayed: boolean;
+    defaultSize: number;
 
     /*Child Components*/
     selectedTabName: string
