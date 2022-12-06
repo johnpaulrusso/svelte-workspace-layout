@@ -1,11 +1,13 @@
 <script lang="ts">
-    import {onMount, afterUpdate} from "svelte";
+    import {onMount, createEventDispatcher} from "svelte";
     import Sidebar from "./Sidebar.svelte";
     import { MIN_SIDEBAR_HEIGHT_PX, MIN_SIDEBAR_WIDTH_PX  } from "../controllers/SidebarController";
     import { LeftbarController, LEFT_BAR_OFFSET_PX } from "../controllers/LeftbarController";
     import { BottombarController } from "../controllers/BottombarController";
     import * as tabMgr from "../controllers/TabbedContentController"
     import type {WorkspaceLayoutConfiguration} from "../models/WorkspaceLayoutConfiguration"
+
+    const dispatch = createEventDispatcher();
 
     /* public properties */
     // TODO: Package these in an interface.
@@ -97,15 +99,25 @@
 
         //We need to calculate an offset here incase the layout is nested in another UI element.
         let offsetX = containerElement.getBoundingClientRect().left;
-        leftSideBar.resize(mouseX + offsetX);
+        if(leftSideBar.resize(mouseX + offsetX))
+        {
+            //This is needed to trigger Svelte reactivity.
+            leftSideBar = leftSideBar;
+
+            //emit resize event.
+            dispatch('sidebar-resized');
+        }
 
         //We need to calculate an offset here incase the layout is nested in another UI element.
         let sby = containerElement.getBoundingClientRect().top + containerElement.getBoundingClientRect().height - mouseY;
-        bottomSideBar.resize(sby);
+        if(bottomSideBar.resize(sby))
+        {
+            //This is needed to trigger Svelte reactivity.
+            bottomSideBar = bottomSideBar;
 
-        //This is needed to trigger Svelte reactivity.
-        leftSideBar = leftSideBar;
-        bottomSideBar = bottomSideBar;
+            //emit resize event.
+            dispatch('sidebar-resized');
+        }
     }
 
     /**
