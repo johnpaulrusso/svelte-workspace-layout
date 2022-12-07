@@ -37,7 +37,7 @@ export class TabbedContentManager{
     #nextContentUid: number = 0;
     #activeUid: string = "-1";
     
-    constructor(tabbedContentContainerModels: ISidebarModel[], buttonStyle?: string, buttonHoverStyle?: string, tabClickedCallback?: (tabContainerName: string) => void, onChangeCallback?: (tabContainerName: string) => void)
+    constructor(tabbedContentContainerModels: ISidebarModel[], buttonStyle?: string, buttonHoverStyle?: string, tabClickedCallback?: (tabContainerName: string, tabOpened?: boolean) => void, onChangeCallback?: (tabContainerName: string) => void)
     {
         this.tabbedContentContainerModels = tabbedContentContainerModels;
         if(buttonStyle)

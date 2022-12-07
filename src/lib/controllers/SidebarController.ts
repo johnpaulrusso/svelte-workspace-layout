@@ -73,15 +73,21 @@ export abstract class SidebarController
         }
     }
 
-    toggleOpenClose()
+    /**
+     * toggleOpenClose
+     * @returns true if the sidebar was opened.
+     */
+    toggleOpenClose() : boolean
     {
         if(this.model.isMinimized)
         {
             this.open();
+            return true;
         }
         else
         {
             this.close();
+            return false;
         }
     }
 
@@ -99,7 +105,12 @@ export abstract class SidebarController
         this.resizeCustom();
     }
 
-    changeTab(tabName: string | null)
+    /**
+     * changeTab
+     * @param tabName 
+     * @returns Returns true if the tab needed to be opened in the process.
+     */
+    changeTab(tabName: string | null) : boolean
     {
         if(tabName)
         {
@@ -109,8 +120,10 @@ export abstract class SidebarController
                 this.model.size = this.model.defaultSize;
                 this.model.isMinimized = false;
                 this.resizeCustom();
+                return true;
             }
         }
+        return false;
     }
 
     abstract updateIsMouseOverBorder(mouseX: number, mouseY: number, borderWidth: number): void

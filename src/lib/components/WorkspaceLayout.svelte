@@ -1,5 +1,5 @@
 <script lang="ts">
-    import {onMount, createEventDispatcher} from "svelte";
+    import {onMount, createEventDispatcher, afterUpdate} from "svelte";
     import Sidebar from "./Sidebar.svelte";
     import { MIN_SIDEBAR_HEIGHT_PX, MIN_SIDEBAR_WIDTH_PX  } from "../controllers/SidebarController";
     import { LeftbarController, LEFT_BAR_OFFSET_PX } from "../controllers/LeftbarController";
@@ -33,6 +33,8 @@
 
     let tabbedContentManager: tabMgr.TabbedContentManager | null = null; 
 
+    let emitResizeAfterUpdate: boolean = false;
+
     onMount(() => {
 
         getElementsIfNull();
@@ -52,7 +54,12 @@
         {
             if(leftSideBar.model.isMinimized)
             {
-                leftSideBar.toggleOpenClose();
+                let wasOpened: boolean = leftSideBar.toggleOpenClose();
+                if(wasOpened)
+                {
+                    let offset = leftSideBar.model.defaultSize - MIN_SIDEBAR_WIDTH_PX;
+                    dispatch('sidebar-resized', offset);
+                }
             }
             leftSideBar = leftSideBar;
         }
@@ -60,7 +67,12 @@
         {
             if(bottomSideBar.model.isMinimized)
             {
-                bottomSideBar.toggleOpenClose();
+                let wasOpened: boolean = bottomSideBar.toggleOpenClose();
+                if(wasOpened)
+                {
+                    let offset = bottomSideBar.model.defaultSize - MIN_SIDEBAR_HEIGHT_PX;
+                    dispatch('sidebar-resized', offset);
+                }
             }
             bottomSideBar = bottomSideBar;
         }
@@ -183,27 +195,17 @@
     }
 
     function onOpenCloseLeftbar() {
-        leftSideBar.toggleOpenClose();
+        let wasOpened: boolean = leftSideBar.toggleOpenClose();
         leftSideBar = leftSideBar;
-        dispatch('sidebar-resized');
+        let offset = leftSideBar.model.defaultSize - MIN_SIDEBAR_WIDTH_PX;
+        dispatch('sidebar-resized', wasOpened ? offset : (-1 * offset));
     }   
 
     function onOpenCloseBottombar() {
-        bottomSideBar.toggleOpenClose();
+        let wasOpened: boolean = bottomSideBar.toggleOpenClose();
         bottomSideBar = bottomSideBar;
-        dispatch('sidebar-resized');
-    }   
-
-    function onChangeTabLeftbar(event: CustomEvent) {
-        leftSideBar.changeTab(event.detail);
-        leftSideBar = leftSideBar;
-        dispatch('sidebar-resized');
-    }   
-
-    function onChangeTabBottombar(event: CustomEvent) {
-        bottomSideBar.changeTab(event.detail);
-        bottomSideBar = bottomSideBar;
-        dispatch('sidebar-resized');
+        let offset = bottomSideBar.model.defaultSize - MIN_SIDEBAR_HEIGHT_PX;
+        dispatch('sidebar-resized', wasOpened ? offset : (-1 * offset));
     }   
 
 </script>
@@ -213,8 +215,7 @@
     <Sidebar model={leftSideBar.model}
              controlBar_backgroundColor={config.controlBar_backgroundColor}
              controlBarButton_color={config.controlBarButton_color}
-             on:open_close_event={onOpenCloseLeftbar}
-             on:tab_change_event={onChangeTabLeftbar}>
+             on:open_close_event={onOpenCloseLeftbar}>
     </Sidebar>
     <div class="container-nested-vertical">
         <div class="main-content">
@@ -223,8 +224,7 @@
         <Sidebar model={bottomSideBar.model}
                 controlBar_backgroundColor={config.controlBar_backgroundColor}
                 controlBarButton_color={config.controlBarButton_color}
-                on:open_close_event={onOpenCloseBottombar}
-                on:tab_change_event={onChangeTabBottombar}>
+                on:open_close_event={onOpenCloseBottombar}>
         </Sidebar>
     </div>
 </div>
