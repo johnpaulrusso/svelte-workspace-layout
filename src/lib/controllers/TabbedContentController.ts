@@ -36,6 +36,7 @@ export class TabbedContentManager{
     /** Use this to identify content wrappers. */
     #nextContentUid: number = 0;
     #activeUid: string = "-1";
+    #tabOpenedCallbacks: Map<string, ()=>void>;
     
     constructor(tabbedContentContainerModels: ISidebarModel[], buttonStyle?: string, buttonHoverStyle?: string, tabClickedCallback?: (tabContainerName: string, tabOpened?: boolean) => void, onChangeCallback?: (tabContainerName: string) => void)
     {
@@ -56,6 +57,7 @@ export class TabbedContentManager{
         {
             this.onChangeCallback = onChangeCallback;
         }
+        this.#tabOpenedCallbacks = new Map<string, ()=>void>();
     }
 
     /**
@@ -133,7 +135,18 @@ export class TabbedContentManager{
                         stagingItem?.appendChild(activeContentWrapper);
                         activeItem?.appendChild(cws);
                         this.#activeUid = cws.dataset.uid!;
-                        
+
+                        let tabName = cws.dataset.name!;
+                        if(this.#tabOpenedCallbacks.has(tabName))
+                        {
+                            //Wait for a repaint before making the callback.
+                            let tabOpenedCallback: ()=>void = this.#tabOpenedCallbacks.get(tabName)!;
+                            requestAnimationFrame(() => {
+                                requestAnimationFrame(() => {
+                                    tabOpenedCallback();
+                                });
+                            });
+                        }                        
                     }
                 })
 
@@ -146,6 +159,11 @@ export class TabbedContentManager{
                 this.tabClickedCallback(parentTabbedFlexItem.id);
             } 
         }
+    }
+
+    registerOnTabOpenedCallback(tabName: string, callback: () => void) 
+    {
+        this.#tabOpenedCallbacks.set(tabName, callback);
     }
 
     #placeInStagingElementOfParentId(parentId: string | undefined, wrappedContent: HTMLElement)

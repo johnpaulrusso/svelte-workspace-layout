@@ -55,6 +55,14 @@
         });
     })
 
+    export const registerOnTabOpenedCallback = (tabName: string, callback: () => void) =>
+    {
+        if(tabbedContentManager)
+        {
+            tabbedContentManager.registerOnTabOpenedCallback(tabName, callback);
+        }
+    }
+
     const onTabClicked = (tabContainerName: string) =>
     {
         if(tabContainerName == "leftsidebar")
