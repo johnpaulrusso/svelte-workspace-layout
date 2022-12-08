@@ -33,8 +33,6 @@
 
     let tabbedContentManager: tabMgr.TabbedContentManager | null = null; 
 
-    let emitResizeAfterUpdate: boolean = false;
-
     onMount(() => {
 
         getElementsIfNull();
@@ -46,6 +44,15 @@
     
         tabbedContentManager = new tabMgr.TabbedContentManager([leftSideBar.model, bottomSideBar.model], config.tabButtonStyle, config.tabButtonStyleHover, onTabClicked, onTabManagerChange);
         tabbedContentManager.placeItemsInInitialLocations();
+
+        requestAnimationFrame(() => {
+            // fires before next repaint
+            requestAnimationFrame(() => {
+                // fires before the _next_ next repaint
+                // ...which is effectively _after_ the next repaint
+                dispatch("layout-initialized");
+            });
+        });
     })
 
     const onTabClicked = (tabContainerName: string) =>
