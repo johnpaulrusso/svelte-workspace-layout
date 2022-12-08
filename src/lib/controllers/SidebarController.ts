@@ -2,7 +2,7 @@ export const REZISE_MOUSE_TOLERANCE_PX: number = 5;
 export const MIN_SIDEBAR_HEIGHT_PX: number = 20;
 export const MIN_SIDEBAR_WIDTH_PX: number = 46;
 export const SIDEBAR_AUTO_MINIMIZE_ZONE_PX: number = 50;
-export const DEFAULT_SIZE_PX: number = 200;
+const DEFAULT_SIZE_PX: number = 200;
 
 import type { ISidebarModel } from "../models/SidebarModel";
 import { SidebarOrientation } from "../models/SidebarModel";
@@ -26,6 +26,7 @@ export abstract class SidebarController
             isMouseOverBorder: false,
             isResizing: false,
             isMinimized: false,
+            defaultSize: DEFAULT_SIZE_PX,
             selectedTabName: "",
             isDisplayed: false,
         }
@@ -72,21 +73,27 @@ export abstract class SidebarController
         }
     }
 
-    toggleOpenClose()
+    /**
+     * toggleOpenClose
+     * @returns true if the sidebar was opened.
+     */
+    toggleOpenClose() : boolean
     {
         if(this.model.isMinimized)
         {
             this.open();
+            return true;
         }
         else
         {
             this.close();
+            return false;
         }
     }
 
     open()
     {
-        this.model.size = DEFAULT_SIZE_PX;
+        this.model.size = this.model.defaultSize;
         this.model.isMinimized = false;
         this.resizeCustom();
     }
@@ -98,18 +105,25 @@ export abstract class SidebarController
         this.resizeCustom();
     }
 
-    changeTab(tabName: string | null)
+    /**
+     * changeTab
+     * @param tabName 
+     * @returns Returns true if the tab needed to be opened in the process.
+     */
+    changeTab(tabName: string | null) : boolean
     {
         if(tabName)
         {
             this.model.selectedTabName = tabName
             if(this.model.isMinimized)
             {
-                this.model.size = DEFAULT_SIZE_PX;
+                this.model.size = this.model.defaultSize;
                 this.model.isMinimized = false;
                 this.resizeCustom();
+                return true;
             }
         }
+        return false;
     }
 
     abstract updateIsMouseOverBorder(mouseX: number, mouseY: number, borderWidth: number): void

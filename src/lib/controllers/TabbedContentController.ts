@@ -36,8 +36,9 @@ export class TabbedContentManager{
     /** Use this to identify content wrappers. */
     #nextContentUid: number = 0;
     #activeUid: string = "-1";
+    #tabOpenedCallbacks: Map<string, ()=>void>;
     
-    constructor(tabbedContentContainerModels: ISidebarModel[], buttonStyle?: string, buttonHoverStyle?: string, tabClickedCallback?: (tabContainerName: string) => void, onChangeCallback?: (tabContainerName: string) => void)
+    constructor(tabbedContentContainerModels: ISidebarModel[], buttonStyle?: string, buttonHoverStyle?: string, tabClickedCallback?: (tabContainerName: string, tabOpened?: boolean) => void, onChangeCallback?: (tabContainerName: string) => void)
     {
         this.tabbedContentContainerModels = tabbedContentContainerModels;
         if(buttonStyle)
@@ -56,6 +57,7 @@ export class TabbedContentManager{
         {
             this.onChangeCallback = onChangeCallback;
         }
+        this.#tabOpenedCallbacks = new Map<string, ()=>void>();
     }
 
     /**
@@ -118,6 +120,14 @@ export class TabbedContentManager{
                         {
                             //No need to do anything, already active.
                             isAlreadyActive = true;
+
+                            //Need to see if it is being opened!
+                            let tabbedContentContainerModel = this.tabbedContentContainerModels.find(m => m.name === activeContentWrapper!.dataset.parentid);
+                            if(tabbedContentContainerModel?.isMinimized)
+                            {
+                                let tabName = activeContentWrapper.dataset.name!;
+                                this.#triggerTabOpenedCallback(tabName);      
+                            }
                         }
                     }
                 }
@@ -133,7 +143,9 @@ export class TabbedContentManager{
                         stagingItem?.appendChild(activeContentWrapper);
                         activeItem?.appendChild(cws);
                         this.#activeUid = cws.dataset.uid!;
-                        
+
+                        let tabName = cws.dataset.name!;
+                        this.#triggerTabOpenedCallback(tabName);                  
                     }
                 })
 
@@ -146,6 +158,11 @@ export class TabbedContentManager{
                 this.tabClickedCallback(parentTabbedFlexItem.id);
             } 
         }
+    }
+
+    registerOnTabOpenedCallback(tabName: string, callback: () => void) 
+    {
+        this.#tabOpenedCallbacks.set(tabName, callback);
     }
 
     #placeInStagingElementOfParentId(parentId: string | undefined, wrappedContent: HTMLElement)
@@ -278,6 +295,20 @@ export class TabbedContentManager{
                 }
             });
         }
+    }
+
+    #triggerTabOpenedCallback(tabName: string)
+    {
+        if(this.#tabOpenedCallbacks.has(tabName))
+        {
+            //Wait for a repaint before making the callback.
+            let tabOpenedCallback: ()=>void = this.#tabOpenedCallbacks.get(tabName)!;
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    tabOpenedCallback();
+                });
+            });
+        }    
     }
 
 

@@ -1,11 +1,13 @@
 <script lang="ts">
-    import {onMount, afterUpdate} from "svelte";
+    import {onMount, createEventDispatcher, afterUpdate} from "svelte";
     import Sidebar from "./Sidebar.svelte";
     import { MIN_SIDEBAR_HEIGHT_PX, MIN_SIDEBAR_WIDTH_PX  } from "../controllers/SidebarController";
-    import { LeftbarController } from "../controllers/LeftbarController";
+    import { LeftbarController, LEFT_BAR_OFFSET_PX } from "../controllers/LeftbarController";
     import { BottombarController } from "../controllers/BottombarController";
     import * as tabMgr from "../controllers/TabbedContentController"
     import type {WorkspaceLayoutConfiguration} from "../models/WorkspaceLayoutConfiguration"
+
+    const dispatch = createEventDispatcher();
 
     /* public properties */
     // TODO: Package these in an interface.
@@ -16,15 +18,18 @@
         tabButtonStyle: "",
         tabButtonStyleHover: "",
         minimizeLeftbarOnStart: false,
-        minimizeBottombarOnStart: false
+        minimizeBottombarOnStart: false,
+        defaultSidebarSizePx: 200
     };
 
     let mouseX: number = 0;
     let mouseY: number = 0;
     let containerElement: HTMLElement | null;
 
-    let leftSideBar: LeftbarController = new LeftbarController("leftsidebar", config.minimizeLeftbarOnStart ? MIN_SIDEBAR_WIDTH_PX : 200);
-    let bottomSideBar: BottombarController = new BottombarController("bottomsidebar", config.minimizeBottombarOnStart ? MIN_SIDEBAR_HEIGHT_PX : 200);
+    let defaultSize: number = config.defaultSidebarSizePx ? config.defaultSidebarSizePx : 200;
+
+    let leftSideBar: LeftbarController = new LeftbarController("leftsidebar", config.minimizeLeftbarOnStart ? MIN_SIDEBAR_WIDTH_PX : (defaultSize + LEFT_BAR_OFFSET_PX));
+    let bottomSideBar: BottombarController = new BottombarController("bottomsidebar", config.minimizeBottombarOnStart ? MIN_SIDEBAR_HEIGHT_PX : defaultSize);
 
     let tabbedContentManager: tabMgr.TabbedContentManager | null = null; 
 
@@ -34,10 +39,29 @@
 
         leftSideBar.model.isMinimized = config.minimizeLeftbarOnStart;
         bottomSideBar.model.isMinimized = config.minimizeBottombarOnStart;
+        leftSideBar.model.defaultSize = defaultSize + LEFT_BAR_OFFSET_PX;
+        bottomSideBar.model.defaultSize = defaultSize;
     
         tabbedContentManager = new tabMgr.TabbedContentManager([leftSideBar.model, bottomSideBar.model], config.tabButtonStyle, config.tabButtonStyleHover, onTabClicked, onTabManagerChange);
         tabbedContentManager.placeItemsInInitialLocations();
+
+        requestAnimationFrame(() => {
+            // fires before next repaint
+            requestAnimationFrame(() => {
+                // fires before the _next_ next repaint
+                // ...which is effectively _after_ the next repaint
+                dispatch("layout-initialized");
+            });
+        });
     })
+
+    export const registerOnTabOpenedCallback = (tabName: string, callback: () => void) =>
+    {
+        if(tabbedContentManager)
+        {
+            tabbedContentManager.registerOnTabOpenedCallback(tabName, callback);
+        }
+    }
 
     const onTabClicked = (tabContainerName: string) =>
     {
@@ -45,7 +69,12 @@
         {
             if(leftSideBar.model.isMinimized)
             {
-                leftSideBar.toggleOpenClose();
+                let wasOpened: boolean = leftSideBar.toggleOpenClose();
+                if(wasOpened)
+                {
+                    let offset = leftSideBar.model.defaultSize - MIN_SIDEBAR_WIDTH_PX;
+                    dispatch('sidebar-resized', offset);
+                }
             }
             leftSideBar = leftSideBar;
         }
@@ -53,7 +82,12 @@
         {
             if(bottomSideBar.model.isMinimized)
             {
-                bottomSideBar.toggleOpenClose();
+                let wasOpened: boolean = bottomSideBar.toggleOpenClose();
+                if(wasOpened)
+                {
+                    let offset = bottomSideBar.model.defaultSize - MIN_SIDEBAR_HEIGHT_PX;
+                    dispatch('sidebar-resized', offset);
+                }
             }
             bottomSideBar = bottomSideBar;
         }
@@ -92,15 +126,25 @@
 
         //We need to calculate an offset here incase the layout is nested in another UI element.
         let offsetX = containerElement.getBoundingClientRect().left;
-        leftSideBar.resize(mouseX + offsetX);
+        if(leftSideBar.resize(mouseX + offsetX))
+        {
+            //This is needed to trigger Svelte reactivity.
+            leftSideBar = leftSideBar;
+
+            //emit resize event.
+            dispatch('sidebar-resized');
+        }
 
         //We need to calculate an offset here incase the layout is nested in another UI element.
         let sby = containerElement.getBoundingClientRect().top + containerElement.getBoundingClientRect().height - mouseY;
-        bottomSideBar.resize(sby);
+        if(bottomSideBar.resize(sby))
+        {
+            //This is needed to trigger Svelte reactivity.
+            bottomSideBar = bottomSideBar;
 
-        //This is needed to trigger Svelte reactivity.
-        leftSideBar = leftSideBar;
-        bottomSideBar = bottomSideBar;
+            //emit resize event.
+            dispatch('sidebar-resized');
+        }
     }
 
     /**
@@ -166,23 +210,17 @@
     }
 
     function onOpenCloseLeftbar() {
-        leftSideBar.toggleOpenClose();
+        let wasOpened: boolean = leftSideBar.toggleOpenClose();
         leftSideBar = leftSideBar;
+        let offset = leftSideBar.model.defaultSize - MIN_SIDEBAR_WIDTH_PX;
+        dispatch('sidebar-resized', wasOpened ? offset : (-1 * offset));
     }   
 
     function onOpenCloseBottombar() {
-        bottomSideBar.toggleOpenClose();
+        let wasOpened: boolean = bottomSideBar.toggleOpenClose();
         bottomSideBar = bottomSideBar;
-    }   
-
-    function onChangeTabLeftbar(event: CustomEvent) {
-        leftSideBar.changeTab(event.detail);
-        leftSideBar = leftSideBar;
-    }   
-
-    function onChangeTabBottombar(event: CustomEvent) {
-        bottomSideBar.changeTab(event.detail);
-        bottomSideBar = bottomSideBar;
+        let offset = bottomSideBar.model.defaultSize - MIN_SIDEBAR_HEIGHT_PX;
+        dispatch('sidebar-resized', wasOpened ? offset : (-1 * offset));
     }   
 
 </script>
@@ -192,8 +230,7 @@
     <Sidebar model={leftSideBar.model}
              controlBar_backgroundColor={config.controlBar_backgroundColor}
              controlBarButton_color={config.controlBarButton_color}
-             on:open_close_event={onOpenCloseLeftbar}
-             on:tab_change_event={onChangeTabLeftbar}>
+             on:open_close_event={onOpenCloseLeftbar}>
     </Sidebar>
     <div class="container-nested-vertical">
         <div class="main-content">
@@ -202,8 +239,7 @@
         <Sidebar model={bottomSideBar.model}
                 controlBar_backgroundColor={config.controlBar_backgroundColor}
                 controlBarButton_color={config.controlBarButton_color}
-                on:open_close_event={onOpenCloseBottombar}
-                on:tab_change_event={onChangeTabBottombar}>
+                on:open_close_event={onOpenCloseBottombar}>
         </Sidebar>
     </div>
 </div>

@@ -12,7 +12,8 @@
         tabButtonStyle: tabButtonStyle,
         tabButtonStyleHover: tabButtonStyleHover,
         minimizeLeftbarOnStart: true,
-        minimizeBottombarOnStart: false
+        minimizeBottombarOnStart: false,
+        defaultSidebarSizePx: 200
     };
     
 </script>
