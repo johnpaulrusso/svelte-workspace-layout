@@ -120,6 +120,14 @@ export class TabbedContentManager{
                         {
                             //No need to do anything, already active.
                             isAlreadyActive = true;
+
+                            //Need to see if it is being opened!
+                            let tabbedContentContainerModel = this.tabbedContentContainerModels.find(m => m.name === activeContentWrapper!.dataset.parentid);
+                            if(tabbedContentContainerModel?.isMinimized)
+                            {
+                                let tabName = activeContentWrapper.dataset.name!;
+                                this.#triggerTabOpenedCallback(tabName);      
+                            }
                         }
                     }
                 }
@@ -137,16 +145,7 @@ export class TabbedContentManager{
                         this.#activeUid = cws.dataset.uid!;
 
                         let tabName = cws.dataset.name!;
-                        if(this.#tabOpenedCallbacks.has(tabName))
-                        {
-                            //Wait for a repaint before making the callback.
-                            let tabOpenedCallback: ()=>void = this.#tabOpenedCallbacks.get(tabName)!;
-                            requestAnimationFrame(() => {
-                                requestAnimationFrame(() => {
-                                    tabOpenedCallback();
-                                });
-                            });
-                        }                        
+                        this.#triggerTabOpenedCallback(tabName);                  
                     }
                 })
 
@@ -296,6 +295,20 @@ export class TabbedContentManager{
                 }
             });
         }
+    }
+
+    #triggerTabOpenedCallback(tabName: string)
+    {
+        if(this.#tabOpenedCallbacks.has(tabName))
+        {
+            //Wait for a repaint before making the callback.
+            let tabOpenedCallback: ()=>void = this.#tabOpenedCallbacks.get(tabName)!;
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    tabOpenedCallback();
+                });
+            });
+        }    
     }
 
 
