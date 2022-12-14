@@ -264,7 +264,7 @@ export abstract class SidebarController
 
                     tabButton.onmouseover = () =>
                     {
-                        tabButton.style.cssText = this.model.config.tabButtonStyle;
+                        tabButton.style.cssText = this.model.config.tabButtonStyleHover;
                     }
                     tabButton.onmouseout = () =>
                     {
