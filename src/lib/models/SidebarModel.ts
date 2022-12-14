@@ -1,3 +1,5 @@
+import type { WorkspaceLayoutConfiguration } from "./WorkspaceLayoutConfiguration";
+
 export enum SidebarOrientation 
 {
     VERTICAL = 0,
@@ -31,4 +33,8 @@ export interface ISidebarModel
 
     /*Child Components*/
     selectedTabName: string
+    selectedTabUid: string
+
+    /*Style*/
+    config: WorkspaceLayoutConfiguration
 }

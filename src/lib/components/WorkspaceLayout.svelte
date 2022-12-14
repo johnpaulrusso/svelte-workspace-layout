@@ -28,8 +28,45 @@
 
     let defaultSize: number = config.defaultSidebarSizePx ? config.defaultSidebarSizePx : 200;
 
-    let leftSideBar: LeftbarController = new LeftbarController("leftsidebar", config.minimizeLeftbarOnStart ? MIN_SIDEBAR_WIDTH_PX : (defaultSize + LEFT_BAR_OFFSET_PX));
-    let bottomSideBar: BottombarController = new BottombarController("bottomsidebar", config.minimizeBottombarOnStart ? MIN_SIDEBAR_HEIGHT_PX : defaultSize);
+    /**
+     * This needs to be up here... otherwise there is a constructor error with sidebar controller.
+     * @param tabContainerName
+     * @param tabName
+     */
+    const onTabClicked = (tabContainerName: string, tabName: string) =>
+    {
+        if(tabContainerName == "leftsidebar" && leftSideBar)
+        {
+            leftSideBar.model.selectedTabName = tabName;
+            if(leftSideBar.model.isMinimized)
+            {
+                let wasOpened: boolean = leftSideBar.toggleOpenClose(tabName);
+                if(wasOpened)
+                {
+                    let offset = leftSideBar.model.defaultSize - MIN_SIDEBAR_WIDTH_PX;
+                    dispatch('sidebar-resized', offset);
+                }
+            }
+            leftSideBar = leftSideBar;
+        }
+        if(tabContainerName == "bottomsidebar" && bottomSideBar)
+        {
+            bottomSideBar.model.selectedTabName = tabName;
+            if(bottomSideBar.model.isMinimized)
+            {
+                let wasOpened: boolean = bottomSideBar.toggleOpenClose(tabName);
+                if(wasOpened)
+                {
+                    let offset = bottomSideBar.model.defaultSize - MIN_SIDEBAR_HEIGHT_PX;
+                    dispatch('sidebar-resized', offset);
+                }
+            }
+            bottomSideBar = bottomSideBar;
+        }
+    }
+
+    let leftSideBar: LeftbarController = new LeftbarController("leftsidebar", config.minimizeLeftbarOnStart ? MIN_SIDEBAR_WIDTH_PX : (defaultSize + LEFT_BAR_OFFSET_PX), config, onTabClicked);
+    let bottomSideBar: BottombarController = new BottombarController("bottomsidebar", config.minimizeBottombarOnStart ? MIN_SIDEBAR_HEIGHT_PX : defaultSize, config, onTabClicked);
 
     let tabbedContentManager: tabMgr.TabbedContentManager | null = null; 
 
@@ -42,8 +79,11 @@
         leftSideBar.model.defaultSize = defaultSize + LEFT_BAR_OFFSET_PX;
         bottomSideBar.model.defaultSize = defaultSize;
     
-        tabbedContentManager = new tabMgr.TabbedContentManager([leftSideBar.model, bottomSideBar.model], config.tabButtonStyle, config.tabButtonStyleHover, onTabClicked, onTabManagerChange);
+        tabbedContentManager = new tabMgr.TabbedContentManager([leftSideBar.model, bottomSideBar.model], config.tabButtonStyle, config.tabButtonStyleHover, onTabManagerChange);
         tabbedContentManager.placeItemsInInitialLocations();
+
+        leftSideBar.initialize();
+        bottomSideBar.initialize();
 
         requestAnimationFrame(() => {
             // fires before next repaint
@@ -55,45 +95,7 @@
         });
     })
 
-    export const registerOnTabOpenedCallback = (tabName: string, callback: () => void) =>
-    {
-        if(tabbedContentManager)
-        {
-            tabbedContentManager.registerOnTabOpenedCallback(tabName, callback);
-        }
-    }
 
-    const onTabClicked = (tabContainerName: string, tabName: string) =>
-    {
-        if(tabContainerName == "leftsidebar")
-        {
-            leftSideBar.model.selectedTabName = tabName;
-            if(leftSideBar.model.isMinimized)
-            {
-                let wasOpened: boolean = leftSideBar.toggleOpenClose();
-                if(wasOpened)
-                {
-                    let offset = leftSideBar.model.defaultSize - MIN_SIDEBAR_WIDTH_PX;
-                    dispatch('sidebar-resized', offset);
-                }
-            }
-            leftSideBar = leftSideBar;
-        }
-        if(tabContainerName == "bottomsidebar")
-        {
-            bottomSideBar.model.selectedTabName = tabName;
-            if(bottomSideBar.model.isMinimized)
-            {
-                let wasOpened: boolean = bottomSideBar.toggleOpenClose();
-                if(wasOpened)
-                {
-                    let offset = bottomSideBar.model.defaultSize - MIN_SIDEBAR_HEIGHT_PX;
-                    dispatch('sidebar-resized', offset);
-                }
-            }
-            bottomSideBar = bottomSideBar;
-        }
-    }
 
     const onTabManagerChange = (tabContainerName: string) => 
     {
@@ -121,14 +123,21 @@
 
         if(!containerElement) {return}
         
-        leftSideBar.updateIsMouseOverBorder(mouseX, mouseY, config.borderWidth_px);
-        bottomSideBar.updateIsMouseOverBorder(mouseX, mouseY, config.borderWidth_px);
+        if(leftSideBar)
+        {
+            leftSideBar.updateIsMouseOverBorder(mouseX, mouseY, config.borderWidth_px);
+        }
+
+        if(bottomSideBar)
+        {
+            bottomSideBar.updateIsMouseOverBorder(mouseX, mouseY, config.borderWidth_px);
+        }
 
         updateCursorStyle();
 
         //We need to calculate an offset here incase the layout is nested in another UI element.
         let offsetX = containerElement.getBoundingClientRect().left;
-        if(leftSideBar.resize(mouseX + offsetX))
+        if(leftSideBar && leftSideBar.resize(mouseX + offsetX))
         {
             //This is needed to trigger Svelte reactivity.
             leftSideBar = leftSideBar;
@@ -139,7 +148,7 @@
 
         //We need to calculate an offset here incase the layout is nested in another UI element.
         let sby = containerElement.getBoundingClientRect().top + containerElement.getBoundingClientRect().height - mouseY;
-        if(bottomSideBar.resize(sby))
+        if(bottomSideBar && bottomSideBar.resize(sby))
         {
             //This is needed to trigger Svelte reactivity.
             bottomSideBar = bottomSideBar;
@@ -155,8 +164,14 @@
      */
     function onMouseDown()
     {
-        leftSideBar.setIsResizing();
-        bottomSideBar.setIsResizing();
+        if(bottomSideBar)
+        {
+            bottomSideBar.setIsResizing();
+        }
+        if(leftSideBar)
+        {
+            leftSideBar.setIsResizing();
+        }       
     }
 
     /**
@@ -165,8 +180,14 @@
      */
     function onMouseUp()
     {
-        bottomSideBar.clearIsResizing();
-        leftSideBar.clearIsResizing();
+        if(bottomSideBar)
+        {
+            bottomSideBar.clearIsResizing();
+        }
+        if(leftSideBar)
+        {
+            leftSideBar.clearIsResizing();
+        }
     }
 
     function getElementsIfNull()
@@ -175,11 +196,11 @@
         {
             containerElement = document.getElementById("workspace_layout");
         }
-        if(!bottomSideBar.element)
+        if(bottomSideBar && !bottomSideBar.element)
         {
             bottomSideBar.element = document.getElementById(bottomSideBar.model.name);
         }
-        if(!leftSideBar.element)
+        if(leftSideBar && !leftSideBar.element)
         {
             leftSideBar.element = document.getElementById(leftSideBar.model.name);
         }
@@ -191,7 +212,7 @@
         {
             containerElement = document.getElementById("workspace_layout");
         }
-        if(!containerElement) return;
+        if(!containerElement || !leftSideBar || !bottomSideBar) return;
 
         if((leftSideBar.model.isMouseOverBorder || leftSideBar.model.isResizing) && (bottomSideBar.model.isMouseOverBorder || bottomSideBar.model.isResizing))
         {
@@ -212,37 +233,47 @@
     }
 
     function onOpenCloseLeftbar() {
-        let wasOpened: boolean = leftSideBar.toggleOpenClose();
-        leftSideBar = leftSideBar;
-        let offset = leftSideBar.model.defaultSize - MIN_SIDEBAR_WIDTH_PX;
-        dispatch('sidebar-resized', wasOpened ? offset : (-1 * offset));
+        if(leftSideBar)
+        {
+            let wasOpened: boolean = leftSideBar.toggleOpenClose();
+            leftSideBar = leftSideBar;
+            let offset = leftSideBar.model.defaultSize - MIN_SIDEBAR_WIDTH_PX;
+            dispatch('sidebar-resized', wasOpened ? offset : (-1 * offset));
+        }
     }   
 
     function onOpenCloseBottombar() {
-        let wasOpened: boolean = bottomSideBar.toggleOpenClose();
-        bottomSideBar = bottomSideBar;
-        let offset = bottomSideBar.model.defaultSize - MIN_SIDEBAR_HEIGHT_PX;
-        dispatch('sidebar-resized', wasOpened ? offset : (-1 * offset));
+        if(bottomSideBar)
+        {
+            let wasOpened: boolean = bottomSideBar.toggleOpenClose();
+            bottomSideBar = bottomSideBar;
+            let offset = bottomSideBar.model.defaultSize - MIN_SIDEBAR_HEIGHT_PX;
+            dispatch('sidebar-resized', wasOpened ? offset : (-1 * offset));
+        }
     }   
 
 </script>
 
 
 <div class="container-horizontal noselect" id="workspace_layout" on:mousemove={onMouseMove} on:mousedown={onMouseDown} on:mouseup={onMouseUp} on:mouseleave={onMouseUp}>
+    {#if leftSideBar}
     <Sidebar model={leftSideBar.model}
              controlBar_backgroundColor={config.controlBar_backgroundColor}
              controlBarButton_color={config.controlBarButton_color}
              on:open_close_event={onOpenCloseLeftbar}>
     </Sidebar>
+    {/if}
     <div class="container-nested-vertical">
         <div class="main-content">
             <slot name="main-content">Error: Missing Main Content Slot!</slot>
         </div>
+        {#if bottomSideBar}
         <Sidebar model={bottomSideBar.model}
                 controlBar_backgroundColor={config.controlBar_backgroundColor}
                 controlBarButton_color={config.controlBarButton_color}
                 on:open_close_event={onOpenCloseBottombar}>
         </Sidebar>
+        {/if}
     </div>
 </div>
 
