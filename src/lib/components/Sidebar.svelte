@@ -62,7 +62,9 @@
             <div class={CLASS_STAGED_TABS}></div>
         </div>
         <!--If the layout is vertical, display vertical tab button container. This is a wider container for icons buttons. -->
-        <div class={CLASS_TAB_BUTTON_CONTAINER + " vertical"} style="background-color: {controlBar_backgroundColor}"></div>
+        <div class="vertical-button-wrapper" style="background-color: {controlBar_backgroundColor}; width: 52px;">
+            <div class={CLASS_TAB_BUTTON_CONTAINER + " vertical"} style="background-color: {controlBar_backgroundColor}"></div>
+        </div>
     {/if}
 
 </div>
@@ -118,12 +120,14 @@
     }
 
     .tab-buttons.vertical{
-        max-width: 46px;
+        padding: 3px;
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
         align-items: center;
     }
+
+
 
     .staged-tabs{
         display: none;

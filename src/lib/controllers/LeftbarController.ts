@@ -2,7 +2,7 @@ import { SidebarController, REZISE_MOUSE_TOLERANCE_PX, MIN_SIDEBAR_WIDTH_PX, SID
 import { SidebarOrientation } from "../models/SidebarModel";
 import type {WorkspaceLayoutConfiguration} from "../models/WorkspaceLayoutConfiguration"
 
-export const LEFT_BAR_OFFSET_PX: number = 46;
+export const LEFT_BAR_OFFSET_PX: number = 52;
 
 export class LeftbarController extends SidebarController
 {

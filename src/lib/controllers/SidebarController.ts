@@ -1,6 +1,6 @@
 export const REZISE_MOUSE_TOLERANCE_PX: number = 5;
 export const MIN_SIDEBAR_HEIGHT_PX: number = 20;
-export const MIN_SIDEBAR_WIDTH_PX: number = 46;
+export const MIN_SIDEBAR_WIDTH_PX: number = 52;
 export const SIDEBAR_AUTO_MINIMIZE_ZONE_PX: number = 50;
 const DEFAULT_SIZE_PX: number = 200;
 
