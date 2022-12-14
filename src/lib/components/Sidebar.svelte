@@ -7,6 +7,8 @@
 
     const dispatch = createEventDispatcher();
 
+    const CONTROL_BAR_SIZE = "height: " + MIN_SIDEBAR_HEIGHT_PX + "px;";
+
     export let model: ISidebarModel;
 
     export let controlBar_backgroundColor: string = "";
@@ -14,10 +16,9 @@
 
     $: display = model.isDisplayed ? "flex" : "none";
     $: vertical = (model.orientation === SidebarOrientation.VERTICAL) ? "vertical" : "";
-    $: sizeControlbar = (model.orientation === SidebarOrientation.VERTICAL) ? "width: " + MIN_SIDEBAR_HEIGHT_PX + "px;" : "height: " + MIN_SIDEBAR_HEIGHT_PX + "px;";
     $: size = (model.orientation === SidebarOrientation.VERTICAL) ? "width: " + model.width : "height: " + model.height;
     $: controlButtonSymbolName = (model.orientation === SidebarOrientation.VERTICAL) ? 
-        (model.isMinimized ? "expand_less" : "expand_more") :
+        (model.isMinimized ? "chevron_right" : "chevron_left") :
         (model.isMinimized ? "expand_less" : "expand_more");
 
     function onClickOpenClose()
@@ -30,19 +31,40 @@
 <!-- Dependent on Google material symbols -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 <div class="container tabbable-content-container {vertical}" id={model.name} style="{size}; display: {display}; {model.border}">
-    {#if !model.isMinimized || model.orientation === SidebarOrientation.HORIZONTAL}
-    <div class="control-bar {vertical}" style="{sizeControlbar} background-color: {controlBar_backgroundColor}">
-        {#if model.orientation === SidebarOrientation.HORIZONTAL}
-        <div class={CLASS_TAB_BUTTON_CONTAINER}></div>
-        {/if}
-        <span class="material-symbols-outlined control-button" style="color: {controlBarButton_color};" on:click={onClickOpenClose} on:keydown={()=>{}}>{controlButtonSymbolName}</span>
-    </div>
+    <!--If the layout is not minimized or horizontal, display the control bar.-->
+    {#if model.orientation === SidebarOrientation.HORIZONTAL}
+        <div class="control-bar" style="{CONTROL_BAR_SIZE} background-color: {controlBar_backgroundColor}">
+
+            <!--Only horizontal layouts have the tab buttons in the control bar.-->
+            <div class={CLASS_TAB_BUTTON_CONTAINER}></div>
+
+            <!--All control bars need an open/close button. -->
+            <span class="material-symbols-outlined control-button" style="color: {controlBarButton_color};" on:click={onClickOpenClose} on:keydown={()=>{}}>{controlButtonSymbolName}</span>
+        </div>
+        
+        <!--CONTENT-->
+        <div class={CLASS_ACTIVE_TAB}></div>
+
+        <!--This element is never visible.-->
+        <div class={CLASS_STAGED_TABS}></div>
+    {:else}
+        <div class="vertical-sub-container">
+            <div class="control-bar" style="{CONTROL_BAR_SIZE} background-color: {controlBar_backgroundColor}">
+                <div class="title" style="font-size: small; font-family: Tahoma; background-color: {controlBar_backgroundColor}; color: {controlBarButton_color}">{model.selectedTabName}</div>
+
+                <!--All control bars need an open/close button. -->
+                <span class="material-symbols-outlined control-button" style="color: {controlBarButton_color};" on:click={onClickOpenClose} on:keydown={()=>{}}>{controlButtonSymbolName}</span>
+            </div>
+            <!--CONTENT-->
+            <div class="{CLASS_ACTIVE_TAB}" style="border-right: solid {controlBar_backgroundColor}"></div>
+
+            <!--This element is never visible.-->
+            <div class={CLASS_STAGED_TABS}></div>
+        </div>
+        <!--If the layout is vertical, display vertical tab button container. This is a wider container for icons buttons. -->
+        <div class={CLASS_TAB_BUTTON_CONTAINER + " vertical"} style="background-color: {controlBar_backgroundColor}"></div>
     {/if}
-    <div class={CLASS_ACTIVE_TAB}></div>
-    <div class={CLASS_STAGED_TABS}></div>
-    {#if model.orientation === SidebarOrientation.VERTICAL}
-    <div class={CLASS_TAB_BUTTON_CONTAINER + " vertical"} style="background-color: {controlBar_backgroundColor}"></div>
-    {/if}
+
 </div>
 <style>
     .container{
@@ -53,6 +75,7 @@
         flex-direction: column;
         overflow: hidden;
     }
+
     .container.vertical{
         flex-direction: row-reverse;
     }
@@ -68,17 +91,22 @@
         align-items: center;
     }
 
-    .control-bar.vertical{
-        writing-mode: vertical-lr;
-        justify-content:flex-start;
+    .vertical-sub-container{
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        overflow: hidden;
     }
 
     .active-tab{
-        width: 100%;
-        height: 100%;
+        flex: 1;
         display: flex;
         flex-direction: column;
         overflow: hidden;
+    }
+
+    .active-tab.vertical{
+        border-right: solid red;
     }
 
     .material-symbols-outlined {
@@ -100,4 +128,6 @@
     .staged-tabs{
         display: none;
     }
+
+
 </style>

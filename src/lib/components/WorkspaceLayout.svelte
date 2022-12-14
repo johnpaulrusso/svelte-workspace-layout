@@ -63,10 +63,11 @@
         }
     }
 
-    const onTabClicked = (tabContainerName: string) =>
+    const onTabClicked = (tabContainerName: string, tabName: string) =>
     {
         if(tabContainerName == "leftsidebar")
         {
+            leftSideBar.model.selectedTabName = tabName;
             if(leftSideBar.model.isMinimized)
             {
                 let wasOpened: boolean = leftSideBar.toggleOpenClose();
@@ -80,6 +81,7 @@
         }
         if(tabContainerName == "bottomsidebar")
         {
+            bottomSideBar.model.selectedTabName = tabName;
             if(bottomSideBar.model.isMinimized)
             {
                 let wasOpened: boolean = bottomSideBar.toggleOpenClose();

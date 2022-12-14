@@ -30,7 +30,7 @@ export class TabbedContentManager{
     tabbedContentContainerModels: ISidebarModel[] = [];
     buttonStyle: string = "";
     buttonHoverStyle: string = "";
-    tabClickedCallback: ((tabContainerName: string) => void) | null = null;
+    tabClickedCallback: ((tabContainerName: string, tabName: string) => void) | null = null;
     onChangeCallback:  ((tabContainerName: string) => void) | null = null;
 
     /** Use this to identify content wrappers. */
@@ -38,7 +38,7 @@ export class TabbedContentManager{
     #activeUid: string = "-1";
     #tabOpenedCallbacks: Map<string, ()=>void>;
     
-    constructor(tabbedContentContainerModels: ISidebarModel[], buttonStyle?: string, buttonHoverStyle?: string, tabClickedCallback?: (tabContainerName: string, tabOpened?: boolean) => void, onChangeCallback?: (tabContainerName: string) => void)
+    constructor(tabbedContentContainerModels: ISidebarModel[], buttonStyle?: string, buttonHoverStyle?: string, tabClickedCallback?: (tabContainerName: string, tabName: string) => void, onChangeCallback?: (tabContainerName: string) => void)
     {
         this.tabbedContentContainerModels = tabbedContentContainerModels;
         if(buttonStyle)
@@ -100,6 +100,7 @@ export class TabbedContentManager{
 
         if(parentTabbedFlexItem)
         {
+            let tabName: string = "";
             let uidOfTarget = target.dataset.uid;
             let activeContentWrapper: HTMLElement | null = null;
 
@@ -125,7 +126,7 @@ export class TabbedContentManager{
                             let tabbedContentContainerModel = this.tabbedContentContainerModels.find(m => m.name === activeContentWrapper!.dataset.parentid);
                             if(tabbedContentContainerModel?.isMinimized)
                             {
-                                let tabName = activeContentWrapper.dataset.name!;
+                                tabName = activeContentWrapper.dataset.name!;
                                 this.#triggerTabOpenedCallback(tabName);      
                             }
                         }
@@ -144,7 +145,7 @@ export class TabbedContentManager{
                         activeItem?.appendChild(cws);
                         this.#activeUid = cws.dataset.uid!;
 
-                        let tabName = cws.dataset.name!;
+                        tabName = cws.dataset.name!;
                         this.#triggerTabOpenedCallback(tabName);                  
                     }
                 })
@@ -153,9 +154,9 @@ export class TabbedContentManager{
             }
 
             //Finally, emit the callback so the client knows the tab was clicked/changed.
-            if(this.tabClickedCallback && parentTabbedFlexItem.id)
+            if(this.tabClickedCallback && parentTabbedFlexItem.id && tabName)
             {
-                this.tabClickedCallback(parentTabbedFlexItem.id);
+                this.tabClickedCallback(parentTabbedFlexItem.id, tabName);
             } 
         }
     }
