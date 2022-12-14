@@ -30,8 +30,6 @@ export function getSingletonElementByClassFrom(parentElement: HTMLElement, class
 
 export class TabbedContentManager{
     tabbedContentContainerModels: ISidebarModel[] = [];
-    buttonStyle: string = "";
-    buttonHoverStyle: string = "";
     onChangeCallback:  ((tabContainerName: string) => void) | null = null;
 
     /** Use this to identify content wrappers. */
@@ -40,15 +38,7 @@ export class TabbedContentManager{
     constructor(tabbedContentContainerModels: ISidebarModel[], buttonStyle?: string, buttonHoverStyle?: string, onChangeCallback?: (tabContainerName: string) => void)
     {
         this.tabbedContentContainerModels = tabbedContentContainerModels;
-        if(buttonStyle)
-        {
-            this.buttonStyle = buttonStyle;
-        }
-        if(buttonHoverStyle)
-        {
-            this.buttonHoverStyle = buttonHoverStyle;
-        }
-
+        
         if(onChangeCallback)
         {
             this.onChangeCallback = onChangeCallback;

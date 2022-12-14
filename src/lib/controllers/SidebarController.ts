@@ -249,12 +249,13 @@ export abstract class SidebarController
 
                     tabButton.onmouseover = () =>
                     {
-                        tabButton.style.cssText = this.model.config.tabButtonStyleHover;
+                        let isActive: boolean = tabButton.classList.contains("active");
+                        tabButton.style.cssText = isActive ? this.model.config.tabButtonStyleActive : this.model.config.tabButtonStyleHover;
                     }
                     tabButton.onmouseout = () =>
                     {
                         let isActive: boolean = tabButton.classList.contains("active");
-                        tabButton.style.cssText = isActive ? this.model.config.tabButtonStyleHover : this.model.config.tabButtonStyle;
+                        tabButton.style.cssText = isActive ? this.model.config.tabButtonStyleActive : this.model.config.tabButtonStyle;
                     }
                     
                     let self: SidebarController = this;
@@ -309,7 +310,7 @@ export abstract class SidebarController
                 if(btn.dataset.uid === this.model.selectedTabUid)
                 {
                     btn.classList.add("active");
-                    btn.style.cssText = this.model.config.tabButtonStyleHover;
+                    btn.style.cssText = this.model.config.tabButtonStyleActive;
                 }
                 else
                 {
@@ -356,7 +357,7 @@ export abstract class SidebarController
                 let tabButton = Array.from(tabButtons).find(tb => tb.dataset.name === tabName);
                 if(tabButton)
                 {
-                    tabButton.style.cssText = this.model.config.tabButtonStyleHover;
+                    tabButton.style.cssText = this.model.config.tabButtonStyleActive;
                 }
             }
         }

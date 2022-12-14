@@ -17,6 +17,7 @@
         controlBarButton_color: "",
         tabButtonStyle: "",
         tabButtonStyleHover: "",
+        tabButtonStyleActive: "",
         minimizeLeftbarOnStart: false,
         minimizeBottombarOnStart: false,
         defaultSidebarSizePx: 200
