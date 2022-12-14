@@ -140,27 +140,6 @@ export abstract class SidebarController
         this.#clearActiveButton();
     }
 
-    /**
-     * changeTab
-     * @param tabName 
-     * @returns Returns true if the tab needed to be opened in the process.
-     */
-    changeTab(tabName: string | null) : boolean
-    {
-        if(tabName)
-        {
-            this.model.selectedTabName = tabName
-            if(this.model.isMinimized)
-            {
-                this.model.size = this.model.defaultSize;
-                this.model.isMinimized = false;
-                this.resizeCustom();
-                return true;
-            }
-        }
-        return false;
-    }
-
     onTabClicked(event: Event)
     {
         let target = event.target as HTMLElement;
@@ -213,6 +192,12 @@ export abstract class SidebarController
                         this.model.selectedTabName = cws.dataset.name!;         
                     }
                 })
+
+                //This needs be here so that changing open tabs triggers the opened event for the underlying tabbed content.
+                if(!this.model.isMinimized)
+                {
+                    this.#dispatchOpenedEvent(this.model.selectedTabName);
+                }
             }
 
             this.#setTabButtonActiveClass(buttonContainer);
