@@ -1,11 +1,12 @@
 import { SidebarController, REZISE_MOUSE_TOLERANCE_PX, MIN_SIDEBAR_HEIGHT_PX, SIDEBAR_AUTO_MINIMIZE_ZONE_PX } from "./SidebarController";
 import { SidebarOrientation } from "../models/SidebarModel";
+import type {WorkspaceLayoutConfiguration} from "../models/WorkspaceLayoutConfiguration"
 
 export class BottombarController extends SidebarController
 {
-    constructor(name: string, size: number)
+    constructor(name: string, size: number, config: WorkspaceLayoutConfiguration, tabClickedCallback?: (tabContainerName: string, tabName: string) => void)
     {
-        super(name, size);
+        super(name, size, config, tabClickedCallback);
         this.resizeCustom();
         this.model.width = "auto";
         this.model.orientation = SidebarOrientation.HORIZONTAL;

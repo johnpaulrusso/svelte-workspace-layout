@@ -1,13 +1,14 @@
 import { SidebarController, REZISE_MOUSE_TOLERANCE_PX, MIN_SIDEBAR_WIDTH_PX, SIDEBAR_AUTO_MINIMIZE_ZONE_PX } from "./SidebarController";
 import { SidebarOrientation } from "../models/SidebarModel";
+import type {WorkspaceLayoutConfiguration} from "../models/WorkspaceLayoutConfiguration"
 
-export const LEFT_BAR_OFFSET_PX: number = 46;
+export const LEFT_BAR_OFFSET_PX: number = 52;
 
 export class LeftbarController extends SidebarController
 {
-    constructor(name: string, size: number)
+    constructor(name: string, size: number, config: WorkspaceLayoutConfiguration, tabClickedCallback?: (tabContainerName: string, tabName: string) => void)
     {
-        super(name, size);
+        super(name, size, config, tabClickedCallback);
         this.model.height = "auto"
         this.resizeCustom();
         this.model.orientation = SidebarOrientation.VERTICAL;

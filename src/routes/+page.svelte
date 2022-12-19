@@ -4,6 +4,7 @@
     import type {WorkspaceLayoutConfiguration} from "$lib/models/WorkspaceLayoutConfiguration"
     const tabButtonStyle = "border: none; background-color: transparent; color: lightgray;";
     const tabButtonStyleHover = "border: none; background-color: transparent; color: white;";
+    const tabButtonStyleActive = "border: none; border-radius: 5px; background-color: white; color: darkslategray;";
 
     const config: WorkspaceLayoutConfiguration = {
         borderWidth_px: 1,
@@ -11,15 +12,21 @@
         controlBarButton_color: "ghostwhite",
         tabButtonStyle: tabButtonStyle,
         tabButtonStyleHover: tabButtonStyleHover,
+        tabButtonStyleActive: tabButtonStyleActive,
         minimizeLeftbarOnStart: true,
         minimizeBottombarOnStart: false,
         defaultSidebarSizePx: 200
     };
-    
+
+    let changingContent = "CONTENT";
+    function onOpened()
+    {
+        changingContent = "OPENED";
+    }
 </script>
 
-<ContentWrapper parentId="leftsidebar" name="CONTENT 2" materialSymbol="search">
-    <div class="test c2" slot="content">CONTENT 2</div>
+<ContentWrapper parentId="leftsidebar" name="CONTENT 2" materialSymbol="search" on:opened={onOpened}>
+    <div class="test c2" slot="content">{changingContent}</div>
 </ContentWrapper>
 <ContentWrapper parentId="leftsidebar" name="CONTENT 3" materialSymbol="settings">
     <div class="test c3" slot="content">CONTENT 3</div>
