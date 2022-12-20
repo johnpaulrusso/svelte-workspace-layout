@@ -80,7 +80,7 @@
         leftSideBar.model.defaultSize = defaultSize + LEFT_BAR_OFFSET_PX;
         bottomSideBar.model.defaultSize = defaultSize;
     
-        tabbedContentManager = new tabMgr.TabbedContentManager([leftSideBar.model, bottomSideBar.model], config.tabButtonStyle, config.tabButtonStyleHover, onTabManagerChange);
+        tabbedContentManager = new tabMgr.TabbedContentManager([leftSideBar.model, bottomSideBar.model], onTabManagerChange);
         tabbedContentManager.placeItemsInInitialLocations();
 
         leftSideBar.initialize();
@@ -107,6 +107,14 @@
         if(tabContainerName == "bottomsidebar")
         {
             bottomSideBar = bottomSideBar;
+        }
+    }
+
+    export const openContent = (name: string) =>
+    {
+        if(tabbedContentManager)
+        {
+            tabbedContentManager.openTab(name);
         }
     }
 
