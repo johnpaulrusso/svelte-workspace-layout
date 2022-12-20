@@ -35,7 +35,7 @@ export class TabbedContentManager{
     /** Use this to identify content wrappers. */
     #nextContentUid: number = 0;
     
-    constructor(tabbedContentContainerModels: ISidebarModel[], buttonStyle?: string, buttonHoverStyle?: string, onChangeCallback?: (tabContainerName: string) => void)
+    constructor(tabbedContentContainerModels: ISidebarModel[], onChangeCallback?: (tabContainerName: string) => void)
     {
         this.tabbedContentContainerModels = tabbedContentContainerModels;
         
@@ -88,6 +88,21 @@ export class TabbedContentManager{
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * openTab
+     * TODO: Use UID instead of name!
+     * @param tabName 
+     */
+    openTab(tabName: string)
+    {
+        let tabButtons = document.getElementsByClassName("tab-button") as HTMLCollectionOf<HTMLElement>;
+        let tabButton = Array.from(tabButtons).find(tb => tb.title === tabName);
+        if(tabButton)
+        {
+            tabButton.click();
         }
     }
 
