@@ -50,7 +50,7 @@
     {:else}
         <div class="vertical-sub-container">
             <div class="control-bar" style="{CONTROL_BAR_SIZE} background-color: {controlBar_backgroundColor}">
-                <div class="title" style="padding-left: 3px; font-size: small; font-family: Tahoma; background-color: {controlBar_backgroundColor}; color: {controlBarButton_color}">{model.selectedTabName}</div>
+                <div class="title" style="white-space: nowrap; overflow: hidden; padding-left: 3px; font-size: small; font-family: Tahoma; background-color: {controlBar_backgroundColor}; color: {controlBarButton_color}">{model.selectedTabName}</div>
 
                 <!--All control bars need an open/close button. -->
                 <span class="material-symbols-outlined control-button" style="color: {controlBarButton_color};" on:click={onClickOpenClose} on:keydown={()=>{}}>{controlButtonSymbolName}</span>
