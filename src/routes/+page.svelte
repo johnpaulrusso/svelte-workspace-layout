@@ -2,9 +2,10 @@
     import WorkspaceLayout from '$lib/components/WorkspaceLayout.svelte'
 	import ContentWrapper from '$lib/components/ContentWrapper.svelte';
     import type {WorkspaceLayoutConfiguration} from "$lib/models/WorkspaceLayoutConfiguration"
-    const tabButtonStyle = "border: none; background-color: transparent; color: lightgray;";
-    const tabButtonStyleHover = "border: none; background-color: transparent; color: white;";
-    const tabButtonStyleActive = "border: none; border-radius: 5px; background-color: white; color: darkslategray;";
+    const tabButtonStyle = "border: solid transparent 3px; border-radius: 5px;background-color: transparent; color: lightgray; box-shadow: 0px 0px 1px 1px transparent, 0px 0px 1px 1px transparent inset;";
+    const tabButtonStyleHover = "border: solid transparent 3px; border-radius: 5px; background-color: transparent; color: white;";
+    const tabButtonStyleActive = "border: solid transparent 3px; border-radius: 5px; background-color: white; color: darkslategray;";
+    const tabButtonGlow = "border: solid white 3px; border-radius: 5px; background-color: transparent; color: white; box-shadow: 0px 0px 1px 1px white, 0px 0px 1px 1px white inset;";
 
     const config: WorkspaceLayoutConfiguration = {
         borderWidth_px: 1,
@@ -13,6 +14,7 @@
         tabButtonStyle: tabButtonStyle,
         tabButtonStyleHover: tabButtonStyleHover,
         tabButtonStyleActive: tabButtonStyleActive,
+        tabButtonStyleGlow: tabButtonGlow,
         minimizeLeftbarOnStart: true,
         minimizeBottombarOnStart: false,
         defaultSidebarSizePx: 200

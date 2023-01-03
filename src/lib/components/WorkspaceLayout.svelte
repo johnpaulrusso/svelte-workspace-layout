@@ -18,6 +18,7 @@
         tabButtonStyle: "",
         tabButtonStyleHover: "",
         tabButtonStyleActive: "",
+        tabButtonStyleGlow: "",
         minimizeLeftbarOnStart: false,
         minimizeBottombarOnStart: false,
         defaultSidebarSizePx: 200
@@ -86,6 +87,8 @@
         leftSideBar.initialize();
         bottomSideBar.initialize();
 
+        createKeyframes();
+
         requestAnimationFrame(() => {
             // fires before next repaint
             requestAnimationFrame(() => {
@@ -96,7 +99,12 @@
         });
     })
 
-
+    function createKeyframes()
+    {
+        let keyframeStyle = document.createElement("style") as HTMLStyleElement;
+        keyframeStyle.innerHTML = "@keyframes glowing {0% {" + config.tabButtonStyle + "} 50% {" + config.tabButtonStyleGlow + "} 100% {" + config.tabButtonStyle + "}}";
+        document.head.appendChild(keyframeStyle);
+    }
 
     const onTabManagerChange = (tabContainerName: string) => 
     {

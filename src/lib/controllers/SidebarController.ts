@@ -1,6 +1,6 @@
 export const REZISE_MOUSE_TOLERANCE_PX: number = 5;
 export const MIN_SIDEBAR_HEIGHT_PX: number = 20;
-export const MIN_SIDEBAR_WIDTH_PX: number = 52;
+export const MIN_SIDEBAR_WIDTH_PX: number = 62;
 export const SIDEBAR_AUTO_MINIMIZE_ZONE_PX: number = 50;
 const DEFAULT_SIZE_PX: number = 200;
 
@@ -228,7 +228,7 @@ export abstract class SidebarController
                     let iconName = cw.dataset.materialsymbol;
 
                     let tabButton = document.createElement("button");
-                    tabButton.style.cssText = this.model.config.tabButtonStyle;
+                    tabButton.style.cssText = this.model.config.tabButtonStyle + "animation: glowing 2s infinite ease-in-out;";
                     tabButton.classList.add("tab-button");
                     tabButton.setAttribute('data-uid', cw.dataset.uid!);
                     tabButton.title = cw.dataset.name ? cw.dataset.name : "";

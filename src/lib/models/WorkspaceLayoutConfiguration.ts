@@ -7,6 +7,7 @@ export interface WorkspaceLayoutConfiguration
     tabButtonStyle: string;
     tabButtonStyleHover: string;
     tabButtonStyleActive: string;
+    tabButtonStyleGlow: string;
 
     minimizeLeftbarOnStart: boolean;
     minimizeBottombarOnStart: boolean;
