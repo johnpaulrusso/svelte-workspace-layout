@@ -126,6 +126,18 @@
         }
     }
 
+    export const flashContentButton = (tabContainerName: string, name: string) =>
+    {
+        if(tabContainerName == "leftsidebar")
+        {
+            leftSideBar.flash(name);
+        }
+        if(tabContainerName == "bottomsidebar")
+        {
+            bottomSideBar.flash(name);
+        }
+    }
+
     /**
      * This component must always monitor mouse movement to handle 
      * seemless sub-element resizing. 

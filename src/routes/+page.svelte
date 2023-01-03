@@ -25,6 +25,14 @@
     {
         changingContent = "OPENED";
     }
+
+    let flashContentButton: (tabContainerName: string, name: string) => void;
+
+    function onLayoutInitialized()
+    {
+        flashContentButton("leftsidebar", "CONTENT 2");
+    }
+    
 </script>
 
 <ContentWrapper parentId="leftsidebar" name="CONTENT 2" materialSymbol="search" on:opened={onOpened}>
@@ -55,7 +63,7 @@
 <!--FONTS-->
 <!--COLORS-->
 
-<WorkspaceLayout config={config}>
+<WorkspaceLayout config={config} bind:flashContentButton={flashContentButton} on:layout-initialized={onLayoutInitialized}>
     <div class="test c1" slot="main-content">
         <div>CONTENT 1.1</div>
         <div>CONTENT 1.2</div>

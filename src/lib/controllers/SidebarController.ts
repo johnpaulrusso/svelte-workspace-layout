@@ -139,6 +139,16 @@ export abstract class SidebarController
         this.#clearActiveButton();
     }
 
+    flash(tabName: string)
+    {
+        Array.from(this.#tabButtons).forEach(tabButton => {
+            if(tabButton.buttonElement.title === tabName)
+            {
+                tabButton.forceFlash();
+            }
+        });
+    }
+
     /** When a tab button is clicked, this is the first code block to get executed! */
     onTabClicked(event: Event)
     {
