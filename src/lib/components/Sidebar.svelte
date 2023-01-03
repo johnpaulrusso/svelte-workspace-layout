@@ -39,7 +39,9 @@
             <div class={CLASS_TAB_BUTTON_CONTAINER}></div>
 
             <!--All control bars need an open/close button. -->
+            {#if !model.isMinimized}
             <span class="material-symbols-outlined control-button" style="color: {controlBarButton_color};" on:click={onClickOpenClose} on:keydown={()=>{}}>{controlButtonSymbolName}</span>
+            {/if}
         </div>
         
         <!--CONTENT-->

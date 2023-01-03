@@ -99,6 +99,7 @@ export abstract class SidebarController
 
     /**
      * toggleOpenClose
+     * This is never trigger by clicking a tab button, only the open/close button.
      * @returns true if the sidebar was opened.
      */
     toggleOpenClose(tabName?: string) : boolean
@@ -138,6 +139,7 @@ export abstract class SidebarController
         this.#clearActiveButton();
     }
 
+    /** When a tab button is clicked, this is the first code block to get executed! */
     onTabClicked(event: Event)
     {
         let target = event.target as HTMLElement;
@@ -195,9 +197,10 @@ export abstract class SidebarController
                 {
                     this.#dispatchOpenedEvent(this.model.selectedTabName);
                 }
-            }
 
-            this.#setTabButtonActiveClass();
+                //This only needs to occur when the tab changes!
+                this.#forceInactiveTabButtonsToIdle();
+            }
 
             //Finally, emit the callback so the client knows the tab was clicked/changed.
             if(this.tabClickedCallback && parentTabbedFlexItem.id && this.model.selectedTabName)
@@ -281,6 +284,16 @@ export abstract class SidebarController
                 tabButton.forceActive();
             }
             else
+            {
+                tabButton.forceIdle();
+            }
+        });
+    }
+
+    #forceInactiveTabButtonsToIdle()
+    {
+        Array.from(this.#tabButtons).forEach(tabButton => {
+            if(tabButton.buttonElement.dataset.uid !== this.model.selectedTabUid)
             {
                 tabButton.forceIdle();
             }
