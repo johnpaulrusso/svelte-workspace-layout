@@ -20,6 +20,7 @@ export class TabButtonStateMachine
         /* IDLE Transitions */
         this.idle.addTransition(new TabButtonStateTransition(this.hover, ['onmouseover']));
         this.idle.addTransition(new TabButtonStateTransition(this.flash, ['external']));
+        this.idle.addTransition(new TabButtonStateTransition(this.active, ['external']));
 
         /* HOVER Transitions */
         this.hover.addTransition(new TabButtonStateTransition(this.idle, ['onmouseout']));

@@ -8,12 +8,15 @@ import type { ISidebarModel } from "../models/SidebarModel";
 import { SidebarOrientation } from "../models/SidebarModel";
 import {getSingletonElementByClassFrom, CLASS_TAB_BUTTON_CONTAINER, CLASS_STAGED_TABS, CLASS_TABBABLE_CONTENT, CLASS_TABBABLE_CONTENT_CONTAINER, CLASS_ACTIVE_TAB} from "./TabbedContentController"
 import type {WorkspaceLayoutConfiguration} from "../models/WorkspaceLayoutConfiguration"
+import { TabButton } from "../elements/TabButton";
 export abstract class SidebarController
 {
     model: ISidebarModel;
 
     //The underlying element is intentionally NOT part of the interface.
     element: HTMLElement | null;
+
+    #tabButtons: Array<TabButton> = [];
 
     tabClickedCallback: ((tabContainerName: string, tabName: string) => void) | null = null;
 
@@ -47,15 +50,10 @@ export abstract class SidebarController
     {
         this.#createTabButtonsForAllStagedElements();
         this.#setInitialActiveTab();
-        
 
-        if(this.element && !this.model.isMinimized)
+        if(!this.model.isMinimized)
         {
-            let buttonContainer = getSingletonElementByClassFrom(this.element as HTMLElement, CLASS_TAB_BUTTON_CONTAINER);
-            if(buttonContainer)
-            {
-                this.#setTabButtonActiveClass(buttonContainer);
-            }
+            this.#setTabButtonActiveClass();
         }
     }
 
@@ -152,7 +150,6 @@ export abstract class SidebarController
 
             let stagingItem = getSingletonElementByClassFrom(parentTabbedFlexItem as HTMLElement, CLASS_STAGED_TABS);
             let activeItem = getSingletonElementByClassFrom(parentTabbedFlexItem as HTMLElement, CLASS_ACTIVE_TAB);
-            let buttonContainer = getSingletonElementByClassFrom(parentTabbedFlexItem as HTMLElement, CLASS_TAB_BUTTON_CONTAINER);
 
             let isAlreadyActive = false;
             if(activeItem)
@@ -200,7 +197,7 @@ export abstract class SidebarController
                 }
             }
 
-            this.#setTabButtonActiveClass(buttonContainer);
+            this.#setTabButtonActiveClass();
 
             //Finally, emit the callback so the client knows the tab was clicked/changed.
             if(this.tabClickedCallback && parentTabbedFlexItem.id && this.model.selectedTabName)
@@ -225,44 +222,19 @@ export abstract class SidebarController
             Array.from(childWrappers).forEach(cw => {
                 if(cw)
                 {
-                    let iconName = cw.dataset.materialsymbol;
-
-                    let tabButton = document.createElement("button");
-                    tabButton.style.cssText = this.model.config.tabButtonStyle + "animation: glowing 2s infinite ease-in-out;";
-                    tabButton.classList.add("tab-button");
-                    tabButton.setAttribute('data-uid', cw.dataset.uid!);
-                    tabButton.title = cw.dataset.name ? cw.dataset.name : "";
-
-                    if(iconName)
-                    {
-                        let buttonIconSpan = document.createElement("span");
-                        buttonIconSpan.innerHTML = iconName;
-                        buttonIconSpan.classList.add("material-symbols-outlined");
-                        buttonIconSpan.setAttribute('data-uid', cw.dataset.uid!);
-                        buttonIconSpan.style.cssText = "font-size: xx-large; margin: 5px 3px 5px 3px";
-                        tabButton.appendChild(buttonIconSpan)
-                    }
-                    else
-                    {
-                        tabButton.innerHTML = cw.dataset.name ? cw.dataset.name : "";
-                    }
-
-                    tabButton.onmouseover = () =>
-                    {
-                        let isActive: boolean = tabButton.classList.contains("active");
-                        tabButton.style.cssText = isActive ? this.model.config.tabButtonStyleActive : this.model.config.tabButtonStyleHover;
-                    }
-                    tabButton.onmouseout = () =>
-                    {
-                        let isActive: boolean = tabButton.classList.contains("active");
-                        tabButton.style.cssText = isActive ? this.model.config.tabButtonStyleActive : this.model.config.tabButtonStyle;
-                    }
-                    
                     let self: SidebarController = this;
-                    tabButton.onclick = (event: Event) => {
-                        self.onTabClicked(event);
-                    }
-                    buttonContainer?.appendChild(tabButton);
+                    let iconName = cw.dataset.materialsymbol;
+                    let tabButton = new TabButton(cw.dataset.uid!, cw.dataset.name ? cw.dataset.name : "", iconName, 
+                                                           this.model.config.tabButtonStyle, 
+                                                           this.model.config.tabButtonStyleHover, 
+                                                           this.model.config.tabButtonStyleActive, 
+                                                           this.model.config.tabButtonStyle + "animation: glowing 2s infinite ease-in-out;",
+                                                           (event: Event) => {
+                                                                self.onTabClicked(event);
+                                                           });
+
+                    buttonContainer?.appendChild(tabButton.buttonElement);
+                    this.#tabButtons.push(tabButton);
                 }
             })
         }
@@ -301,40 +273,25 @@ export abstract class SidebarController
      * depending on the active UID. 
      * @param buttonContainer 
      */
-    #setTabButtonActiveClass(buttonContainer: HTMLElement | null)
+    #setTabButtonActiveClass()
     {
-        if(buttonContainer)
-        {
-            let tabButtons = buttonContainer.getElementsByClassName("tab-button") as HTMLCollectionOf<HTMLElement>;
-            Array.from(tabButtons).forEach(btn => {
-                if(btn.dataset.uid === this.model.selectedTabUid)
-                {
-                    btn.classList.add("active");
-                    btn.style.cssText = this.model.config.tabButtonStyleActive;
-                }
-                else
-                {
-                    btn.classList.remove("active");
-                    btn.style.cssText = this.model.config.tabButtonStyle;
-                }
-            });
-        }
+        Array.from(this.#tabButtons).forEach(tabButton => {
+            if(tabButton.buttonElement.dataset.uid === this.model.selectedTabUid)
+            {
+                tabButton.forceActive();
+            }
+            else
+            {
+                tabButton.forceIdle();
+            }
+        });
     }
 
     #clearActiveButton()
     {
-        if(this.element)
-        {
-            let buttonContainer = getSingletonElementByClassFrom(this.element as HTMLElement, CLASS_TAB_BUTTON_CONTAINER);
-            if(buttonContainer)
-            {
-                let tabButtons = buttonContainer.getElementsByClassName("tab-button") as HTMLCollectionOf<HTMLElement>;
-                Array.from(tabButtons).forEach(btn => {
-                    btn.classList.remove("active");
-                    btn.style.cssText = this.model.config.tabButtonStyle;
-                });
-            }
-        }
+        Array.from(this.#tabButtons).forEach(tabButton => {
+            tabButton.forceIdle();
+        });
     }
 
     #dispatchOpenedEvent(tabName: string)
@@ -348,19 +305,16 @@ export abstract class SidebarController
 
     #updateTabButtonStyle(tabName: string)
     {
-        if(this.element)
-        {
-            let buttonContainer = getSingletonElementByClassFrom(this.element as HTMLElement, CLASS_TAB_BUTTON_CONTAINER);
-            if(buttonContainer)
+        Array.from(this.#tabButtons).forEach(tabButton => {
+            if(tabButton.buttonElement.title === tabName)
             {
-                let tabButtons = buttonContainer.getElementsByClassName("tab-button") as HTMLCollectionOf<HTMLElement>;
-                let tabButton = Array.from(tabButtons).find(tb => tb.dataset.name === tabName);
-                if(tabButton)
-                {
-                    tabButton.style.cssText = this.model.config.tabButtonStyleActive;
-                }
+                tabButton.forceActive();
             }
-        }
+            else
+            {
+                tabButton.forceIdle();
+            }
+        });
     }
 
     abstract updateIsMouseOverBorder(mouseX: number, mouseY: number, borderWidth: number): void
