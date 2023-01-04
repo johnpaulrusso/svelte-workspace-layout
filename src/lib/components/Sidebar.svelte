@@ -39,7 +39,9 @@
             <div class={CLASS_TAB_BUTTON_CONTAINER}></div>
 
             <!--All control bars need an open/close button. -->
+            {#if !model.isMinimized}
             <span class="material-symbols-outlined control-button" style="color: {controlBarButton_color};" on:click={onClickOpenClose} on:keydown={()=>{}}>{controlButtonSymbolName}</span>
+            {/if}
         </div>
         
         <!--CONTENT-->
@@ -62,7 +64,7 @@
             <div class={CLASS_STAGED_TABS}></div>
         </div>
         <!--If the layout is vertical, display vertical tab button container. This is a wider container for icons buttons. -->
-        <div class="vertical-button-wrapper" style="background-color: {controlBar_backgroundColor}; width: 52px;">
+        <div class="vertical-button-wrapper" style="background-color: {controlBar_backgroundColor}; width: 58px; padding: 3px 2px 2px 2px;">
             <div class={CLASS_TAB_BUTTON_CONTAINER + " vertical"} style="background-color: {controlBar_backgroundColor}"></div>
         </div>
     {/if}
