@@ -226,6 +226,7 @@ export abstract class SidebarController
      */
     #createTabButtonsForAllStagedElements()
     {
+
         let stagingItem = getSingletonElementByClassFrom(this.element as HTMLElement, CLASS_STAGED_TABS);
         let buttonContainer = getSingletonElementByClassFrom(this.element  as HTMLElement, CLASS_TAB_BUTTON_CONTAINER);
 
@@ -237,7 +238,7 @@ export abstract class SidebarController
                 {
                     let self: SidebarController = this;
                     let iconName = cw.dataset.materialsymbol;
-                    let tabButton = new TabButton(cw.dataset.uid!, cw.dataset.name ? cw.dataset.name : "", iconName, 
+                    let tabButton = new TabButton(this.model.name, cw.dataset.uid!, cw.dataset.name ? cw.dataset.name : "", iconName, 
                                                            this.model.config.tabButtonStyle, 
                                                            this.model.config.tabButtonStyleHover, 
                                                            this.model.config.tabButtonStyleActive, 

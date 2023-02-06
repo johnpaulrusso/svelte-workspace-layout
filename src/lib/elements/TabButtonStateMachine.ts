@@ -45,4 +45,9 @@ export class TabButtonStateMachine
             this.currentState = transition.targetState;
         }
     }
+
+    getIdleStyle() : string
+    {
+        return this.idle.style;
+    }
 }

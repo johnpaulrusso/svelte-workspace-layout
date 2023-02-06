@@ -5,9 +5,11 @@ export class TabButton
 {
     stateMachine: TabButtonStateMachine;
     buttonElement: HTMLButtonElement;
+    parentName: string;
 
-    constructor(uid: string, title: string, iconName: string | undefined, idleStyle: string, hoverStyle: string, activeStyle: string, flashStyle: string, customOnClickCallback: (event: Event) => void)
+    constructor(parentName: string, uid: string, title: string, iconName: string | undefined, idleStyle: string, hoverStyle: string, activeStyle: string, flashStyle: string, customOnClickCallback: (event: Event) => void)
     {
+        this.parentName = parentName;
         this.stateMachine = new TabButtonStateMachine(idleStyle, hoverStyle, activeStyle, flashStyle);
 
         this.buttonElement = document.createElement("button") as HTMLButtonElement;
@@ -72,6 +74,13 @@ export class TabButton
 
     private setStyle()
     {
-        this.buttonElement.style.cssText = this.stateMachine.currentState.style;
+        if(this.parentName === "bottomsidebar" && this.stateMachine.currentState.id === TabButtonStateID.ACTIVE)
+        {
+            this.buttonElement.style.cssText = this.stateMachine.getIdleStyle() + "font-weight: bold;";
+        }
+        else
+        {
+            this.buttonElement.style.cssText = this.stateMachine.currentState.style;
+        }
     }
 }
