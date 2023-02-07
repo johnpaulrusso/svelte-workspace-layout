@@ -104,14 +104,15 @@ export abstract class SidebarController
      */
     toggleOpenClose(tabName?: string) : boolean
     {
+        let tabNameToUse = tabName ? tabName : this.model.selectedTabName;
         if(this.model.isMinimized)
         {
-            this.open(tabName);
+            this.open(tabNameToUse);
             return true;
         }
         else
         {
-            this.close();
+            this.close(tabNameToUse);
             return false;
         }
     }
@@ -130,13 +131,18 @@ export abstract class SidebarController
         }
     }
 
-    close()
+    close(tabName?: string)
     {
         this.model.size = this.getMinSize();
         this.model.isMinimized = true;
         this.resizeCustom();
 
         this.#clearActiveButton();
+
+        if(tabName)
+        {
+            this.#dispatchClosedEvent(tabName)
+        }
     }
 
     flash(tabName: string)
@@ -194,6 +200,8 @@ export abstract class SidebarController
                 Array.from(childWrappersStaging).forEach(cws => {
                     if(cws && activeContentWrapper && cws.dataset.uid == uidOfTarget)
                     {
+                        this.#dispatchClosedEvent(this.model.selectedTabName);
+
                         //SWAP THIS WITH ACTIVE, PUT ACTIVE BACK INTO STAGING.
                         stagingItem?.appendChild(activeContentWrapper);
                         activeItem?.appendChild(cws);
@@ -326,6 +334,16 @@ export abstract class SidebarController
             tabElement.dispatchEvent(new Event("opened"));
         }
     }
+
+    #dispatchClosedEvent(tabName: string)
+    {
+        let tabElement = document.getElementById("tabbable-content-" + tabName);
+        if(tabElement)
+        {
+            tabElement.dispatchEvent(new Event("closed"));
+        }
+    }
+
 
     #updateTabButtonStyle(tabName: string)
     {

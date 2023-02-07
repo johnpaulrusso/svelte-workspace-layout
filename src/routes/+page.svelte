@@ -21,11 +21,15 @@
     };
 
     let changingContent = "CONTENT";
+    let changingContent2 = "CONTENT";
     function onOpened()
     {
         changingContent = "OPENED";
     }
-
+    function onClosed()
+    {
+        changingContent2 = "CLOSED";
+    }
     let flashContentButton: (tabContainerName: string, name: string) => void;
 
     function onLayoutInitialized()
@@ -38,8 +42,8 @@
 <ContentWrapper parentId="leftsidebar" name="CONTENT 2" materialSymbol="search" on:opened={onOpened}>
     <div class="test c2" slot="content">{changingContent}</div>
 </ContentWrapper>
-<ContentWrapper parentId="leftsidebar" name="CONTENT 3" materialSymbol="settings">
-    <div class="test c3" slot="content">CONTENT 3</div>
+<ContentWrapper parentId="leftsidebar" name="CONTENT 3" materialSymbol="settings" on:closed={onClosed}>
+    <div class="test c3" slot="content">{changingContent2}</div>
 </ContentWrapper>
 
 <ContentWrapper parentId="bottomsidebar" name="CONTENT 4">

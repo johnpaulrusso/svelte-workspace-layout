@@ -12,12 +12,18 @@
         if(element)
         {
             element.addEventListener("opened", onOpened);
+            element.addEventListener("closed", onClosed);
         }
     });
 
     function onOpened()
     {
         dispatch("opened");
+    }
+
+    function onClosed()
+    {
+        dispatch("closed");
     }
 
 </script>
