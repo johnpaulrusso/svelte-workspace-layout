@@ -28,8 +28,6 @@
 
 </script>
 
-<!-- Dependent on Google material symbols -->
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 <div class="container tabbable-content-container {vertical}" id={model.name} style="{size}; display: {display}; {model.border}">
     <!--If the layout is not minimized or horizontal, display the control bar.-->
     {#if model.orientation === SidebarOrientation.HORIZONTAL}
